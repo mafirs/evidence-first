@@ -1,51 +1,126 @@
 # Evidence-first Dev Workflow
 
-A staged AI-native development workflow that forces coding agents to read code, cite evidence, compare routes, write surgical plans, execute only confirmed diffs, and review adversarially.
+English | [简体中文](README.zh-CN.md)
 
-## Why this exists
+Evidence-first Dev Workflow is a staged Prompt workflow for AI coding: read code first, compare routes, confirm the plan, execute strictly, then close with verification and adversarial review.
 
-AI coding agents are strong at writing code, but they often fail in predictable ways:
+It is not a universal Prompt, and it is not an autopilot flow that asks AI to go from request to production in one jump. Its goal is narrower: when you already use AI for coding but often get burned by guessing, scope creep, or premature implementation, these staged templates pull the agent back to evidence, boundaries, and verification.
 
-- They assume instead of reading the code.
-- They mix diagnosis, planning, and execution.
-- They refactor or reformat unrelated code.
-- They treat type checks as proof of behavior.
-- They accept or reject another AI's review without re-checking evidence.
+## What problem it solves
 
-This workflow turns coding with AI into five separate stages:
+The dangerous part of AI coding is usually not that the agent cannot write code. It is that the agent moves into implementation too quickly:
 
-1. Diagnose with code evidence.
-2. Compare routes before choosing a fix.
-3. Write a surgical implementation plan.
-4. Execute only the confirmed diff.
-5. Run adversarial review and close out with verification.
+- It guesses before reading the relevant code.
+- It mixes diagnosis, route selection, planning, and execution.
+- It refactors, reformats, or touches unrelated files.
+- It treats typecheck success as proof that behavior is correct.
+- It accepts or rejects another AI's review without verifying the evidence.
 
-## Quick start
+This workflow does not ask the agent to jump from one request to the final patch. It splits development into stages that can be checked, stopped, and reviewed.
 
-Use the prompt that matches your current stage:
+## Quick start: copy one Prompt
 
-| Stage | Use this prompt |
-|---|---|
-| Find the cause of a bug | `prompts/en/01-diagnose.md` |
-| Compare fixes after diagnosis | `prompts/en/02-route-known-problem.md` |
-| Challenge your own idea | `prompts/en/03-route-with-user-idea.md` |
-| Explore routes from symptoms | `prompts/en/04-route-without-user-idea.md` |
-| Ask for a small plan | `prompts/en/05-small-plan.md` |
-| Ask for a large plan | `prompts/en/06-large-plan.md` |
-| Execute an approved plan | `prompts/en/08-strict-execute.md` |
-| Review another AI's critique | `prompts/en/12-review-response-triage.md` |
+The recommended path is to copy a Prompt template directly.
 
-## Codex Skill
+1. Identify your current stage.
+2. Open the matching template under `prompts/en/`.
+3. If the template needs context, paste the issue symptoms, prior discussion, plan, or review into the context section.
+4. Copy the complete Prompt into your AI coding tool.
+5. Follow the template boundary: read-only stages stay read-only, planning stages only produce a plan, and execution stages only apply confirmed changes.
 
-Install or copy `skills/evidence-first-dev-workflow/` into your Codex skills directory.
+If all you know is that something is broken, start with `prompts/en/01-diagnose.md`.
 
-The Skill acts as a router. It loads only the workflow reference needed for the current stage instead of loading every prompt into context.
+## Choose a template by situation
 
-## Integrations
+| Stage | Current situation | Template |
+|---|---|---|
+| Diagnose | Find the cause of a bug or locate relevant code | `prompts/en/01-diagnose.md` |
+| Route | The problem is diagnosed and you want to compare fixes | `prompts/en/02-route-known-problem.md` |
+| Route | You have an idea and want the AI to challenge it | `prompts/en/03-route-with-user-idea.md` |
+| Route | You only have symptoms and no preset solution | `prompts/en/04-route-without-user-idea.md` |
+| Plan | You need a small change plan without editing code | `prompts/en/05-small-plan.md` |
+| Plan | You need a multi-file or complex change plan | `prompts/en/06-large-plan.md` |
+| Execute | You approved a complete plan and need strict execution | `prompts/en/08-strict-execute.md` |
+| Review | You need to triage another AI's critique without blindly accepting it | `prompts/en/12-review-response-triage.md` |
 
-- `integrations/AGENTS.md` for Codex-style project instructions.
-- `integrations/CLAUDE.md` for Claude Code.
-- `integrations/cursor-rules.mdc` for Cursor.
+## Five-stage workflow
+
+```mermaid
+flowchart LR
+  A["Diagnose\nread-only code"] --> B["Route\ncompare fixes"]
+  B --> C["Plan\nwrite the implementation plan"]
+  C --> D["Execute\napply the confirmed diff"]
+  D --> E["Review\nverify and close out"]
+```
+
+1. **Diagnose**: read code only, cite file-line evidence, and separate fact from inference.
+2. **Route**: compare mechanisms before writing diffs.
+3. **Plan**: produce the implementation plan without editing code.
+4. **Execute**: apply only the confirmed diff, with no opportunistic refactor.
+5. **Review**: challenge findings, verify critiques, and archive low-value comments.
+
+The core principles are evidence discipline, phase separation, minimal change, and verification closure.
+
+## How to fill task context
+
+Many templates need task-specific context, such as issue symptoms, prior conversation, an existing plan, or another AI's review.
+
+Prompt templates are copyable and editable working drafts. You can temporarily paste context into a local template, copy the complete Prompt into the AI tool, then undo the local edit or make sure private context is not committed.
+
+If the context is long, you can put it in a local file and ask the agent to read that file path in the Prompt.
+
+See `docs/context-injection.md` for more examples.
+
+## Codex Skill auxiliary entry
+
+If you use this repository with Codex, you can install or copy `skills/evidence-first-dev-workflow/` as a Codex Skill.
+
+The Skill loads stable stage rules and can reduce repeated protocol text. But it is not the recommended main path: when a task needs context, you still need to provide that context in the chat message, or provide a file path or plan document path for the agent to read.
+
+Do not edit files under `skills/evidence-first-dev-workflow/` to paste one-off task context. Skill files are stable rules, not scratchpads.
+
+## Project-level integrations
+
+If you want to put these rules into project-level constraints, see:
+
+- `integrations/AGENTS.md`: Codex-style project instructions.
+- `integrations/CLAUDE.md`: Claude Code project instructions.
+- `integrations/cursor-rules.mdc`: Cursor rules.
+
+These integrations are useful for long-term agent behavior constraints. For day-to-day work on a specific issue, the recommended path is still to copy the matching Prompt template.
+
+## Safety boundaries
+
+This workflow improves control over AI coding, but it does not replace approval, rollback, audit, and permission boundaries for high-risk operations.
+
+The following situations need extra controls:
+
+- Production releases.
+- Database migrations.
+- Payment, billing, permission, or other irreversible high-risk changes.
+- Automatic remote push and deployment.
+
+## Repository structure
+
+```text
+README.md                 English entry point
+README.zh-CN.md           Chinese entry point
+docs/                     Workflow notes and context injection guidance
+prompts/zh-CN/            Chinese Prompt templates
+prompts/en/               English Prompt templates
+skills/evidence-first-dev-workflow/  Codex Skill auxiliary entry
+integrations/             AGENTS.md / CLAUDE.md / Cursor rules
+examples/                 Example flows
+```
+
+## More documentation
+
+- `docs/stage-guide.md`: choose the right stage and usage mode.
+- `docs/context-injection.md`: where task context should go.
+- `docs/workflow.md`: overview of the five-stage workflow.
+- `examples/bugfix-flow.md`: bugfix flow example.
+- `examples/feature-flow.md`: feature development flow example.
+- `examples/adversarial-review-flow.md`: adversarial review flow example.
 
 ## License
 
