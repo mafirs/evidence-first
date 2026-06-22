@@ -1,10 +1,154 @@
-# Feature Flow Example
+# Feature Flow Walkthrough
 
-This example shows how to challenge a user's implementation idea, compare alternatives, and produce a plan without prematurely editing code.
+这个示例适合你已经有一个实现想法，但不确定它是不是正确路线时阅读。
 
-## Flow
+示例里的产品、接口、文件名都是虚构的，只用于展示工作流。不要把真实业务数据、客户信息、密钥或私人对话提交进仓库。
 
-1. Use `prompts/en/03-route-with-user-idea.md` when the user already has a preferred implementation.
-2. Verify the gap from code before comparing routes.
-3. Treat the user's idea as one candidate, not a constraint.
-4. Produce a plan only after the route is selected.
+## 虚构场景
+
+你在一个文档协作应用里想优化搜索体验：
+
+> 当前搜索只匹配标题。你想新增“搜索正文内容”的能力。
+
+你的初始想法是：
+
+> 直接在前端把所有文档内容拉下来，然后在浏览器里做全文搜索。
+
+你担心这个想法可能有性能和权限问题，但还没有看代码，也不知道项目里是否已有搜索 API 或索引机制。
+
+## 第一步：让 agent 挑战你的想法
+
+先写清楚当前不足、你的想法和担心，再加分隔线，然后复制 `prompts/zh-CN/03-route-with-user-idea.md`。
+
+```text
+当前不足：搜索框只能搜文档标题，搜不到正文里的关键词。
+
+我的想法：进入页面时拉取所有文档正文，在前端做全文搜索。
+
+我的担心：可能会导致首屏慢，也可能暴露用户不该看到的文档内容。
+
+本轮只读不改。请先验证当前不足是否属实，再评估我的想法是否成立。我的想法只是候选方案，不是硬约束。
+
+————————
+<复制 prompts/zh-CN/03-route-with-user-idea.md 的完整内容>
+```
+
+你应该等待 agent 输出：
+
+- 当前不足是否属实。
+- 你的想法技术上是否成立。
+- 它读到的文件和证据。
+- 你的想法与其他路线的对比表。
+- 推荐路线和反转条件。
+
+如果 agent 因为想法是你提的就直接采纳，停下，让它重新比较路线。
+
+## 第二步：必要时交给评审 agent 看早期思路
+
+当路线看起来可行，但你想让另一个 agent 早期挑刺时，把你和对话 agent 的上下文复制给评审 agent，然后复制 `prompts/zh-CN/09-early-idea-review-with-code.md`。
+
+```text
+下面是我和对话 agent 的上下文。我们正在讨论搜索正文能力，当前还只是路线思路，不是最终方案。
+
+<粘贴你和对话 agent 的关键上下文>
+
+————————
+<复制 prompts/zh-CN/09-early-idea-review-with-code.md 的完整内容>
+```
+
+评审 agent 应该关注：
+
+- 当前思路是否解决原始诉求。
+- 对话 agent 对代码现状的描述是否准确。
+- 是否存在更小的路线。
+- 当前路线是否值得推进到方案阶段。
+
+如果评审 agent 没有代码访问能力，可以改用 `prompts/zh-CN/10-early-idea-review-from-chat.md`，但这个路径通常不如 09 可靠。
+
+## 第三步：让对话 agent 出方案
+
+路线确认后，根据范围选择：
+
+- 小功能：`prompts/zh-CN/05-small-plan.md`。
+- 大范围业务功能或跨模块逻辑变化：`prompts/zh-CN/06-large-plan.md`。
+
+```text
+我选择路线：复用后端搜索 API，在服务端扩展正文匹配，并保持现有权限过滤。
+
+请基于上面的讨论给出方案。不要直接改代码。
+
+————————
+<复制 prompts/zh-CN/06-large-plan.md 的完整内容>
+```
+
+你应该等待 agent 输出：
+
+- 读取范围。
+- 每个文件的 diff。
+- 改动分类。
+- 业务影响。
+- 回归测试清单。
+- 额外发现和未修改声明。
+
+## 第四步：正式方案终审
+
+在执行前，把 `05` 或 `06` 输出的方案复制给评审 agent，然后复制 `prompts/zh-CN/11-final-plan-review.md`。
+
+```text
+下面是对话 agent 给出的正式方案，准备执行。请做最后一道挑刺。
+
+<粘贴 05 或 06 输出的完整方案>
+
+————————
+<复制 prompts/zh-CN/11-final-plan-review.md 的完整内容>
+```
+
+评审 agent 应该只指出真正会影响上线、偏离需求或扩大范围的问题。不要让它输出具体代码。
+
+## 第五步：把评审结果交回对话 agent 复核
+
+把评审 agent 的输出复制给对话 agent，然后复制 `prompts/zh-CN/12-review-response-triage.md`。
+
+```text
+下面是评审 agent 对正式方案的批评。请不要盲从，把它转成下一版方案前的决策清单。
+
+<粘贴评审 agent 的输出>
+
+————————
+<复制 prompts/zh-CN/12-review-response-triage.md 的完整内容>
+```
+
+对话 agent 应该输出：
+
+- 思路变化总结。
+- 对每条关键批评的复核结论。
+- 采纳、部分采纳、不采纳或需要用户拍板的分类。
+- 低价值评论的归档项。
+
+## 第六步：严格执行
+
+确认最终方案后：
+
+- 小方案用 `prompts/zh-CN/07-small-execute.md`。
+- 大方案用 `prompts/zh-CN/08-strict-execute.md`。
+
+如果使用 `08`，把已确认方案保存为本地文件，并提供 `<PLAN_DOCUMENT_PATH>`。
+
+## 常见错误
+
+- 因为想法是自己提的，就要求 AI 直接实现。
+- 没读代码就讨论性能和权限。
+- 路线没确认就进入方案。
+- 方案没终审就执行。
+- 把评审 agent 的批评全盘采纳，或全盘否定。
+- 执行时夹带未确认的“更好搜索架构”。
+
+## 最终你应该得到什么
+
+完成这个流程后，你应该得到：
+
+- 对“当前不足是否属实”的代码证据。
+- 对你初始想法的明确裁决。
+- 一条被选中的实现路线。
+- 一份经过终审和复核的方案。
+- 一次严格按方案执行的改动。

@@ -1,5 +1,3 @@
-# 05 — Small Implementation Plan
-
 Give an implementation plan. Do not edit code.
 
 Read the relevant code before planning. Files you have not read must not appear in the plan. Ask at most two critical questions if the answer materially changes the plan; otherwise proceed with labeled assumptions.

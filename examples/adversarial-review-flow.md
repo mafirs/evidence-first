@@ -1,10 +1,99 @@
-# Adversarial Review Flow Example
+# Adversarial Review Flow Walkthrough
 
-This example shows how to triage another AI's critique, accept evidence-backed findings, and archive speculative comments.
+这个示例适合你已经拿到另一个 AI 的批评，但不确定该不该采纳时阅读。
 
-## Flow
+示例里的产品、接口、文件名都是虚构的，只用于展示工作流。不要把真实业务数据、客户信息、密钥或私人对话提交进仓库。
 
-1. Use `prompts/en/12-review-response-triage.md` after another coding agent reviews your plan.
-2. Verify core claims with code, conversation evidence, or product semantics.
-3. Accept valid blockers, partly accept mixed findings, and archive low-value comments.
-4. Convert the review into a decision list for the next plan.
+## 虚构场景
+
+你让评审 agent 评审搜索功能的正式方案。它给出这些批评：
+
+```text
+1. [核心] 方案没有验证权限过滤，可能把无权限文档搜出来。
+2. [边缘] 搜索结果高亮没有设计，用户体验可能不好。
+3. [凑数] 建议加更多日志和注释。
+4. [核心] 方案直接重建索引，可能影响线上写入性能。
+```
+
+你不能直接全盘接受，也不能因为它是另一个 AI 就全盘否定。你需要让原对话 agent 把这份批评转成下一版方案前的决策清单。
+
+## 第一步：把评审结果交回对话 agent
+
+把评审 agent 的完整输出粘给对话 agent，再复制 `prompts/zh-CN/12-review-response-triage.md`。
+
+```text
+下面是评审 agent 对正式方案的批评。
+
+原方案摘要：为文档搜索增加正文匹配能力，计划复用现有搜索 API，在后端扩展查询范围。
+
+评审内容：
+<粘贴评审 agent 的完整输出>
+
+本轮任务：不要盲从这份批评。请逐条复核，把它转成下一版正式方案前的决策清单。
+
+————————
+<复制 prompts/zh-CN/12-review-response-triage.md 的完整内容>
+```
+
+你应该等待对话 agent 输出：
+
+- 思路变化总结。
+- 逐条回应，且每条必须有代码证据、对话证据或产品语义证据。
+- 哪些批评采纳、部分采纳、不采纳或需要用户拍板。
+- 哪些低价值条目归档。
+
+如果对话 agent 没有验证就说“属实”或“不属实”，停下，让它补证据。
+
+## 第二步：判断回到哪个阶段
+
+根据 `12` 的输出选择下一步：
+
+- 如果批评推翻了原路线，回到 `prompts/zh-CN/03-route-with-user-idea.md` 或 `prompts/zh-CN/04-route-without-user-idea.md`。
+- 如果路线仍成立，只是方案要补充约束，回到 `prompts/zh-CN/05-small-plan.md` 或 `prompts/zh-CN/06-large-plan.md`。
+- 如果只有低价值评论，归档即可，不要为了显得严谨而改方案。
+
+## 第三步：把复核结论落实进下一版方案
+
+把 `12` 输出里的结论粘给对话 agent，再使用对应的方案 Prompt。
+
+```text
+根据刚才的评审复核结论，请更新方案。
+
+必须纳入：权限过滤验证、避免影响线上写入性能。
+不纳入：泛泛的“加更多日志和注释”。
+需要用户拍板：搜索结果高亮是否进入本期范围。
+
+————————
+<复制 prompts/zh-CN/06-large-plan.md 的完整内容>
+```
+
+你应该等待 agent 输出新的方案，并检查：
+
+- 属实的 blocker 是否进入方案约束。
+- 部分属实的批评是否只采纳成立部分。
+- 不属实或低价值条目是否没有夹带进 diff。
+- 需要用户拍板的点是否单独列出。
+
+## 第四步：需要时再次终审
+
+如果下一版方案变化很大，把新方案再次交给评审 agent，复制 `prompts/zh-CN/11-final-plan-review.md`。
+
+如果只改了小范围约束，可以由你直接确认后进入执行。
+
+## 常见错误
+
+- 看到 `[核心]` 就全部采纳。
+- 看到 `[凑数]` 就完全不看，漏掉被低估的问题。
+- 没打开相关文件就判断“不属实”。
+- 把“加日志、加注释、更严谨”这类泛泛建议塞进方案。
+- 没把复核结果转成下一版方案的约束。
+
+## 最终你应该得到什么
+
+完成这个流程后，你应该得到：
+
+- 一份思路变化总结。
+- 一份逐条复核后的批评决策清单。
+- 被采纳、部分采纳、不采纳、无法判断的明确分类。
+- 需要用户拍板的产品语义或工程取舍。
+- 下一版方案必须遵守的约束。

@@ -1,5 +1,3 @@
-# 06 — Large Implementation Plan
-
 Only produce an implementation plan. Do not modify, create, or delete project files. Do not run commands that change project state.
 
 ## Preconditions

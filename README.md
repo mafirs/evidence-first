@@ -22,10 +22,10 @@ This workflow does not ask the agent to jump from one request to the final patch
 
 The recommended path is to copy a Prompt template directly.
 
-1. Identify your current stage.
-2. Open the matching template under `prompts/en/`.
-3. If the template needs context, paste the issue symptoms, prior discussion, plan, or review into the context section.
-4. Copy the complete Prompt into your AI coding tool.
+1. First write the current issue, prior discussion, or your own idea in the message.
+2. Add a separator line: `————————`.
+3. Open the matching template under `prompts/en/` and copy its full content after the separator.
+4. Send the complete message to your AI coding tool.
 5. Follow the template boundary: read-only stages stay read-only, planning stages only produce a plan, and execution stages only apply confirmed changes.
 
 If all you know is that something is broken, start with `prompts/en/01-diagnose.md`.
@@ -35,9 +35,8 @@ If all you know is that something is broken, start with `prompts/en/01-diagnose.
 | Stage | Current situation | Template |
 |---|---|---|
 | Diagnose | Find the cause of a bug or locate relevant code | `prompts/en/01-diagnose.md` |
-| Route | The problem is diagnosed and you want to compare fixes | `prompts/en/02-route-known-problem.md` |
 | Route | You have an idea and want the AI to challenge it | `prompts/en/03-route-with-user-idea.md` |
-| Route | You only have symptoms and no preset solution | `prompts/en/04-route-without-user-idea.md` |
+| Route | You have context but no good route yet, or you need the agent to propose one | `prompts/en/04-route-without-user-idea.md` |
 | Plan | You need a small change plan without editing code | `prompts/en/05-small-plan.md` |
 | Plan | You need a multi-file or complex change plan | `prompts/en/06-large-plan.md` |
 | Execute | You approved a complete plan and need strict execution | `prompts/en/08-strict-execute.md` |

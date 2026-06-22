@@ -1,5 +1,3 @@
-# 08 — Strict Execution
-
 Execute the implementation plan in `<PLAN_DOCUMENT_PATH>`.
 
 ## Scope

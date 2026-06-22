@@ -1,5 +1,3 @@
-# 12 — Review Response Triage
-
 Another coding agent reviewed your plan:
 
 ```text

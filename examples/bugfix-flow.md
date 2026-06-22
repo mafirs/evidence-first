@@ -1,13 +1,126 @@
-# Bugfix Flow Example
+# Bugfix Flow Walkthrough
 
-This example shows how to move from a bug symptom to diagnosis, route comparison, surgical plan, strict execution, and closeout.
+这个示例适合你只有 bug 现象，还不知道根因在哪里时阅读。
 
-The codebase and file names are fictional. The goal is to demonstrate the workflow shape without leaking private project context.
+示例里的产品、接口、文件名都是虚构的，只用于展示工作流。不要把真实业务数据、客户信息、密钥或私人对话提交进仓库。
 
-## Flow
+## 虚构场景
 
-1. Start with `prompts/en/01-diagnose.md` to prove the symptom from code.
-2. Use `prompts/en/02-route-known-problem.md` to compare root-cause and stopgap routes.
-3. Use `prompts/en/05-small-plan.md` or `prompts/en/06-large-plan.md` to write the surgical diff.
-4. Use `prompts/en/08-strict-execute.md` to apply only the approved diff.
-5. Close out with verification, skipped items, and manual regression points.
+你在一个任务管理应用里发现问题：
+
+> 用户把任务标记为完成后刷新页面，任务又变回未完成。
+
+你不确定问题在前端状态、API 请求、后端保存逻辑，还是缓存刷新。
+
+## 第一步：定位问题是否存在
+
+先自己写清楚问题，再加分隔线，然后复制 `prompts/zh-CN/01-diagnose.md` 的完整内容。
+
+```text
+当前有个问题：任务详情页点击“完成”后，界面短暂显示完成；刷新页面后又变为未完成。
+
+复现步骤：
+1. 打开任意未完成任务。
+2. 点击“完成”。
+3. 等待页面显示完成。
+4. 刷新页面。
+5. 任务又显示未完成。
+
+请确认是否确实存在这个问题，并定位它实际来自哪里。本轮只读不改。
+
+————————
+<复制 prompts/zh-CN/01-diagnose.md 的完整内容>
+```
+
+你应该等待 agent 输出：
+
+- 它读了哪些文件，为什么相关。
+- 哪些结论是 `[已读确认]`，哪些是 `[假设-需验证]`。
+- 关键证据的文件路径和行号。
+- 如果根因还分叉，列出分支和触发条件。
+
+如果 agent 没读代码就给修法，停下，让它重新执行定位阶段。
+
+## 第二步：没有好思路时让 agent 给路线
+
+当定位阶段已经让 agent 理解上下文，但你还没有好路线时，复制 `prompts/zh-CN/04-route-without-user-idea.md`。
+
+```text
+上面已经定位到：任务完成状态刷新后丢失，但我还没有确定该从前端请求、后端保存，还是缓存刷新入手。
+
+请基于当前对话上下文，给出可选路线。本轮只读不改，不要输出 diff。
+
+————————
+<复制 prompts/zh-CN/04-route-without-user-idea.md 的完整内容>
+```
+
+你应该等待 agent 输出：
+
+- 问题真正的杠杆点在哪里。
+- 可能路线的发散列表。
+- 合并后的 2-4 条路线。
+- 每条路线赌的是什么。
+- 默认倾向和反转条件。
+
+进入下一步前，你需要选定一条路线。
+
+## 第三步：让 agent 出小修方案
+
+如果选定路线只涉及小范围 bugfix，复制 `prompts/zh-CN/05-small-plan.md`。
+
+```text
+我选择路线：修复任务完成状态没有被正确持久化的问题。
+
+请基于上面的定位和路线讨论，给出小修方案。不要直接改代码。
+
+————————
+<复制 prompts/zh-CN/05-small-plan.md 的完整内容>
+```
+
+你应该等待 agent 输出：
+
+- 读了什么文件和关键位置。
+- 按文件组织的 diff。
+- 为什么这样改。
+- 业务影响。
+- 要回归测试的地方。
+- 额外发现。
+
+如果方案里出现顺手重构、格式化或无关改动，要求它移除。
+
+## 第四步：严格执行小修方案
+
+确认方案后，把同一段对话里的方案交给 agent，复制 `prompts/zh-CN/07-small-execute.md`。
+
+```text
+按你刚才输出的小修方案执行。
+
+————————
+<复制 prompts/zh-CN/07-small-execute.md 的完整内容>
+```
+
+你应该等待 agent：
+
+- 先检查已跟踪文件是否有未提交改动。
+- 只应用方案里列出的 diff。
+- 不格式化、不补注释、不重构、不顺手修 bug。
+- 跑最窄验证。
+- 汇报未执行项、验证结果、疑点和未动区域。
+
+## 常见错误
+
+- 定位阶段还没读代码，就让 AI 写修法。
+- 聊到一半没有上下文，却直接贴路线 Prompt。
+- 方案阶段让 AI 顺手改格式或重构。
+- 执行阶段没有先确认方案。
+- typecheck 通过后就认为 bug 已修好，没有按复现步骤回归。
+
+## 最终你应该得到什么
+
+完成这个流程后，你应该得到：
+
+- 一个有文件行号证据的根因判断。
+- 一条经过比较后选定的修复路线。
+- 一个只覆盖必要范围的小修方案。
+- 一次严格按方案执行的改动。
+- 验证结果和需要人工回归的操作清单。

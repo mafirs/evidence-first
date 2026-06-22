@@ -1,5 +1,3 @@
-# 04 — Route From Symptoms Without a Preset Idea
-
 The prior discussion describes symptoms, not a solution. The user has no preset direction. This stage is read-only.
 
 ## Ground symptoms in cause or leverage

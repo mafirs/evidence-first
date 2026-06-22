@@ -1,5 +1,3 @@
-# 03 — Route When the User Has an Idea
-
 The user has already provided a focus point, current gap, and their own idea. This stage is read-only: produce route comparison and recommendation.
 
 ## Validate input before routing
