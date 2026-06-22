@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evidence-first Dev Workflow"
+  short_description: "Evidence-first staged code workflow"
+  default_prompt: "Use $evidence-first-dev-workflow to diagnose, plan, execute, or review this code change."

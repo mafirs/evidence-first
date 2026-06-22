@@ -1,0 +1,15 @@
+---
+description: Evidence-first staged workflow for AI coding agents
+globs: ["**/*"]
+alwaysApply: false
+---
+
+Use the evidence-first workflow for diagnosis, route comparison, implementation planning, strict execution, and adversarial review.
+
+Key rules:
+
+- Read code before claims.
+- Cite file:line evidence.
+- Keep phases separate.
+- Touch only approved files and diffs.
+- Report extra findings separately.
