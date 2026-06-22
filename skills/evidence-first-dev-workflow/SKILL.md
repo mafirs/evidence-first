@@ -20,6 +20,19 @@ Use this Skill as a stage router. Do not load every reference by default. Load o
 
 Read `references/00-core-protocol.md` when the task involves code claims, file edits, plan review, or execution.
 
+## Context handoff
+
+Do not edit this Skill or its references to insert task context.
+
+If a workflow needs pasted context, the user must provide it in the chat message, a linked file, or a plan document path.
+
+When context is missing:
+
+- If the current conversation contains enough context, use it.
+- If the task references a file path, read that file.
+- If neither exists and the missing context materially changes the result, ask for the missing context.
+- Otherwise proceed with a clearly labeled assumption.
+
 ## Non-negotiables
 
 - Do not mix diagnosis, route selection, planning, and execution.
