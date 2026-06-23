@@ -92,6 +92,13 @@ If you want to put these rules into project-level constraints, see:
 
 These integrations are useful for long-term agent behavior constraints. For day-to-day work on a specific issue, the recommended path is still to copy the matching Prompt template.
 
+## Rule templates
+
+If you want to adapt this workflow to your own tools or repositories:
+
+- `rules/global-agent-rules.en.md`: global agent rules template for Codex, Claude Code, Cursor, or similar tools.
+- `rules/generate-project-agent-rules.en.md`: a project-level rules generator Prompt for Codex, Claude Code, or other AI coding agents to read the current repository and generate `AGENTS.md`, `CLAUDE.md`, or an equivalent rules file.
+
 ## Safety boundaries
 
 This workflow improves control over AI coding, but it does not replace approval, rollback, audit, and permission boundaries for high-risk operations.
@@ -113,6 +120,7 @@ prompts/zh-CN/            Chinese Prompt templates
 prompts/en/               English Prompt templates
 skills/evidence-first-dev-workflow/  Codex Skill auxiliary entry
 integrations/             AGENTS.md / CLAUDE.md / Cursor rules
+rules/                    Global rules templates and project-level rules generator
 examples/                 Chinese example flows
 examples/en/              English example flows
 ```
