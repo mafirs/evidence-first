@@ -51,7 +51,7 @@ If all you know is that something is broken, start with `prompts/en/01-diagnose.
 ```mermaid
 flowchart LR
   A["Diagnose\nread-only code"] --> B["Route\ncompare fixes"]
-  B --> C["Plan\nwrite the implementation plan"]
+  B --> C["Plan\nwrite the\nimplementation plan"]
   C --> D["Execute\napply the confirmed diff"]
   D --> E["Review\nverify and close out"]
 ```
