@@ -39,8 +39,11 @@ If all you know is that something is broken, start with `prompts/en/01-diagnose.
 | Route | You have context but no good route yet, or you need the agent to propose one | `prompts/en/04-route-without-user-idea.md` |
 | Plan | You need a small change plan without editing code | `prompts/en/05-small-plan.md` |
 | Plan | You need a multi-file or complex change plan | `prompts/en/06-large-plan.md` |
-| Execute | You approved a complete plan and need strict execution | `prompts/en/08-strict-execute.md` |
-| Review | You need to triage another AI's critique without blindly accepting it | `prompts/en/12-review-response-triage.md` |
+| Execute | You approved a small plan and need to execute it | `prompts/en/07-small-execute.md` |
+| Execute | You approved a large plan and need strict execution | `prompts/en/08-strict-execute.md` |
+| Review | You want another agent to review an early idea with code access | `prompts/en/09-early-idea-review-with-code.md` |
+| Review | You want a final adversarial review before execution | `prompts/en/11-final-plan-review.md` |
+| Review | You need to triage another agent's critique without blindly accepting it | `prompts/en/12-review-response-triage.md` |
 
 ## Five-stage workflow
 
@@ -109,7 +112,8 @@ prompts/zh-CN/            Chinese Prompt templates
 prompts/en/               English Prompt templates
 skills/evidence-first-dev-workflow/  Codex Skill auxiliary entry
 integrations/             AGENTS.md / CLAUDE.md / Cursor rules
-examples/                 Example flows
+examples/                 Chinese example flows
+examples/en/              English example flows
 ```
 
 ## More documentation
@@ -117,9 +121,9 @@ examples/                 Example flows
 - `docs/stage-guide.md`: choose the right stage and usage mode.
 - `docs/context-injection.md`: where task context should go.
 - `docs/workflow.md`: overview of the five-stage workflow.
-- `examples/bugfix-flow.md`: bugfix flow example.
-- `examples/feature-flow.md`: feature development flow example.
-- `examples/adversarial-review-flow.md`: adversarial review flow example.
+- `examples/en/bugfix-flow.md`: bugfix flow example.
+- `examples/en/feature-flow.md`: feature development flow example.
+- `examples/en/adversarial-review-flow.md`: adversarial review flow example.
 
 ## License
 

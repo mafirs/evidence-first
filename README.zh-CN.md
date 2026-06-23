@@ -113,7 +113,8 @@ prompts/zh-CN/            中文 Prompt 模板
 prompts/en/               英文 Prompt 模板
 skills/evidence-first-dev-workflow/  Codex Skill 辅助入口
 integrations/             AGENTS.md / CLAUDE.md / Cursor rules
-examples/                 示例流程
+examples/                 中文示例流程
+examples/en/              英文示例流程
 ```
 
 ## 更多文档
