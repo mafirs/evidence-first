@@ -19,7 +19,7 @@
 
 ## 第一步：把 Claude 的评审发回 Codex 复核
 
-把 Claude 的完整输出粘给 Codex，再复制 `prompts/zh-CN/12-review-response-triage.md`。
+把 Claude 的完整输出粘给 Codex，再复制 `prompts/zh-CN/review-response-triage.md`。
 
 ```text
 下面是 Claude 对正式方案的批评。
@@ -35,7 +35,7 @@ Claude 的评审内容：
 本轮任务：不要盲从这份批评。请逐条复核，把它转成下一版正式方案前的决策清单。
 
 ————————
-[粘贴 prompts/zh-CN/12-review-response-triage.md 的完整内容]
+[粘贴 prompts/zh-CN/review-response-triage.md 的完整内容]
 ```
 
 Codex 的输出应该包含：
@@ -51,15 +51,15 @@ Codex 的输出应该包含：
 
 根据 Codex 的复核结论选择下一步：
 
-- **批评推翻了原路线**（例如第 1 条"权限过滤"属实，且原方案没有覆盖）：回到 `prompts/zh-CN/03-route-with-user-idea.md` 或 `04-route-without-user-idea.md` 重新选路线。
-- **路线仍然成立，方案需要补充约束**（例如需要加权限验证步骤，但整体路线不变）：回到 `05-small-plan.md` 或 `06-large-plan.md` 更新方案。
+- **批评推翻了原路线**（例如第 1 条"权限过滤"属实，且原方案没有覆盖）：回到 `prompts/zh-CN/route-with-user-idea.md` 或 `route-without-user-idea.md` 重新选路线。
+- **路线仍然成立，方案需要补充约束**（例如需要加权限验证步骤，但整体路线不变）：回到 `small-plan.md` 或 `large-plan.md` 更新方案。
 - **只有低价值条目**（例如第 3 条"建议加更多日志"）：归档即可，不要为了显得严谨而改方案。
 
 **停下的信号**：因为看到 `[核心]` 标签就全部采纳，或者因为觉得 Claude 在凑数就全部跳过——两种都是错误。`[核心]` 仍然需要 Codex 验证，`[凑数]` 仍然需要看一眼确认确实是凑数。
 
 ## 第三步：把复核结论落实进下一版方案
 
-把 Codex 的复核结论发给 Codex，明确指定哪些纳入、哪些不纳入，再用 06-large-plan 出新版方案。
+把 Codex 的复核结论发给 Codex，明确指定哪些纳入、哪些不纳入，再用 large-plan 出新版方案。
 
 ```text
 根据刚才的评审复核结论，请更新方案。
@@ -75,7 +75,7 @@ Codex 的输出应该包含：
 - 搜索结果高亮是否进入本期范围（第 2 条，产品取舍，需要你决定）
 
 ————————
-[粘贴 prompts/zh-CN/06-large-plan.md 的完整内容]
+[粘贴 prompts/zh-CN/large-plan.md 的完整内容]
 ```
 
 新方案应该包含：
@@ -88,7 +88,7 @@ Codex 的输出应该包含：
 
 ## 第四步：需要时再次终审
 
-如果新方案变化很大（例如权限验证涉及多个模块），把新方案再次发给 Claude，用 `prompts/zh-CN/11-final-plan-review.md` 再跑一遍终审。
+如果新方案变化很大（例如权限验证涉及多个模块），把新方案再次发给 Claude，用 `prompts/zh-CN/final-plan-review.md` 再跑一遍终审。
 
 如果只是小范围补充（例如只在已有权限检查后加一行过滤），你直接确认后进入执行即可，不必再跑一遍 Claude 终审。
 

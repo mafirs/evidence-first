@@ -19,7 +19,7 @@ You cannot blindly accept all of this, and you cannot dismiss it just because it
 
 ## Step 1: Send Claude's review back to Codex for verification
 
-Paste Claude's full output to Codex, then paste `prompts/en/12-review-response-triage.md`.
+Paste Claude's full output to Codex, then paste `prompts/en/review-response-triage.md`.
 
 ```text
 Below is Claude's critique of the formal plan.
@@ -35,7 +35,7 @@ Claude's findings:
 Your task: do not accept this critique as-is. Verify each item and turn it into a decision checklist for the next version of the plan.
 
 ————————
-[paste prompts/en/12-review-response-triage.md full content]
+[paste prompts/en/review-response-triage.md full content]
 ```
 
 Codex's output should include:
@@ -51,15 +51,15 @@ Codex's output should include:
 
 Based on Codex's verification output, choose your next step:
 
-- **The critique overturns the original route** (e.g., item 1 is confirmed and the plan has no coverage for it): return to `prompts/en/03-route-with-user-idea.md` or `04-route-without-user-idea.md` to choose a new route.
-- **The route still holds, the plan needs additional constraints** (e.g., add a permission check step, but the overall approach is unchanged): return to `prompts/en/05-small-plan.md` or `06-large-plan.md` to update the plan.
+- **The critique overturns the original route** (e.g., item 1 is confirmed and the plan has no coverage for it): return to `prompts/en/route-with-user-idea.md` or `route-without-user-idea.md` to choose a new route.
+- **The route still holds, the plan needs additional constraints** (e.g., add a permission check step, but the overall approach is unchanged): return to `prompts/en/small-plan.md` or `large-plan.md` to update the plan.
 - **Only low-value items remain** (e.g., item 3 "add more logs"): archive them and move on — do not change the plan just to look thorough.
 
 **Stop signal**: Accepting everything labeled `[critical]` without verification, or skipping everything labeled `[filler]` without a glance — both are mistakes. `[critical]` still requires Codex to verify; `[filler]` still needs one look to confirm it is actually filler.
 
 ## Step 3: Apply the verification conclusions to the next version of the plan
 
-Send Codex the verification conclusions, explicitly specify what goes in and what stays out, then use 06-large-plan to produce the updated plan.
+Send Codex the verification conclusions, explicitly specify what goes in and what stays out, then use large-plan to produce the updated plan.
 
 ```text
 Based on the review verification just completed, please update the plan.
@@ -75,7 +75,7 @@ Needs your decision:
 - Whether search result highlighting is in scope for this release (item 2, product trade-off, needs your call)
 
 ————————
-[paste prompts/en/06-large-plan.md full content]
+[paste prompts/en/large-plan.md full content]
 ```
 
 The updated plan should include:
@@ -88,7 +88,7 @@ The updated plan should include:
 
 ## Step 4: Run another final review if needed
 
-If the updated plan has changed substantially (e.g., permission verification touches multiple modules), send the new plan to Claude with `prompts/en/11-final-plan-review.md` for another round.
+If the updated plan has changed substantially (e.g., permission verification touches multiple modules), send the new plan to Claude with `prompts/en/final-plan-review.md` for another round.
 
 If the changes are small (e.g., only added one permission check in an existing guard), confirm directly and proceed to execution — another full Claude review is not necessary.
 

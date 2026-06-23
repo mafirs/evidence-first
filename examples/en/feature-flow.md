@@ -16,9 +16,9 @@ Your initial idea is:
 
 You are worried this might cause performance and permission issues, but you have not looked at the code yet. You do not know whether the project already has a search API or indexing mechanism.
 
-## Step 1: Use 03-route-with-user-idea to have Codex challenge your idea
+## Step 1: Use route-with-user-idea to have Codex challenge your idea
 
-Write out the current gap, your idea, and your concerns. Add a separator line. Then paste the full content of `prompts/en/03-route-with-user-idea.md`.
+Write out the current gap, your idea, and your concerns. Add a separator line. Then paste the full content of `prompts/en/route-with-user-idea.md`.
 
 ```text
 Current gap: the search box only matches document titles, not keywords in the body.
@@ -30,7 +30,7 @@ My concerns: this might slow down the initial page load, and might expose docume
 Read only this round. Please first verify whether the current gap is real, then evaluate whether my idea is viable. My idea is a candidate, not a constraint.
 
 ————————
-[paste prompts/en/03-route-with-user-idea.md full content]
+[paste prompts/en/route-with-user-idea.md full content]
 ```
 
 Codex's output should include:
@@ -44,7 +44,7 @@ Codex's output should include:
 
 ## Step 2: Send the Codex conversation context to Claude for an early review
 
-When the route looks promising but you want Claude to find problems before a formal plan is written, copy the conversation context from Codex to Claude and use `prompts/en/09-early-idea-review-with-code.md`.
+When the route looks promising but you want Claude to find problems before a formal plan is written, copy the conversation context from Codex to Claude and use `prompts/en/early-idea-review-with-code.md`.
 
 Replace the `<PASTE_CONVERSATION_CONTEXT_HERE>` placeholder in the template with the key content from your Codex conversation.
 
@@ -58,11 +58,11 @@ Claude's output should include:
 
 **Stop signal**: Claude raises a concern with no code evidence, only "this might be a problem" — ask it to provide a specific file and line, or explicitly acknowledge that this is an inference, not a code-confirmed finding.
 
-If Claude does not have code access, use `prompts/en/10-early-idea-review-from-chat.md` instead, but this path is generally less reliable than 09.
+If Claude does not have code access, use `prompts/en/early-idea-review-from-chat.md` instead, but this path is generally less reliable than the code-access early review path.
 
 ## Step 3: Ask Codex for an implementation plan
 
-After the route is confirmed, choose 05 or 06 based on scope, in the same Codex conversation.
+After the route is confirmed, choose small-plan or large-plan based on scope, in the same Codex conversation.
 
 ```text
 I am going with this route: reuse the back-end search API, extend query scope on the server side to include body content, and keep the existing permission filtering.
@@ -70,7 +70,7 @@ I am going with this route: reuse the back-end search API, extend query scope on
 Based on the discussion above, give me an implementation plan. Do not edit any code.
 
 ————————
-[paste prompts/en/06-large-plan.md full content]
+[paste prompts/en/large-plan.md full content]
 ```
 
 Codex's output should include:
@@ -85,7 +85,7 @@ Codex's output should include:
 
 ## Step 4: Send the plan to Claude for a final adversarial review
 
-Copy Codex's full plan to Claude and use `prompts/en/11-final-plan-review.md`.
+Copy Codex's full plan to Claude and use `prompts/en/final-plan-review.md`.
 
 Replace the `<PASTE_PLAN_HERE>` placeholder in the template with Codex's full plan.
 
@@ -95,7 +95,7 @@ Claude should only flag things that will cause real problems if left in, or that
 
 ## Step 5: Send Claude's review back to Codex for verification
 
-Copy Claude's full output to Codex and use `prompts/en/12-review-response-triage.md`.
+Copy Claude's full output to Codex and use `prompts/en/review-response-triage.md`.
 
 ```text
 Below is Claude's critique of the formal plan. Do not accept it as-is — turn it into a decision checklist for the next version of the plan.
@@ -103,7 +103,7 @@ Below is Claude's critique of the formal plan. Do not accept it as-is — turn i
 [Claude's full output]
 
 ————————
-[paste prompts/en/12-review-response-triage.md full content]
+[paste prompts/en/review-response-triage.md full content]
 ```
 
 Codex's output should include:
@@ -119,8 +119,8 @@ Codex's output should include:
 
 Choose the execution template based on plan size:
 
-- **Small plan**: in the same Codex conversation, paste the full content of `prompts/en/07-small-execute.md` directly. No additional context needed.
-- **Large plan**: save the final confirmed plan to a local file, paste the full content of `prompts/en/08-strict-execute.md` to Codex, and replace `<PLAN_DOCUMENT_PATH>` with the actual file path.
+- **Small plan**: in the same Codex conversation, paste the full content of `prompts/en/small-execute.md` directly. No additional context needed.
+- **Large plan**: save the final confirmed plan to a local file, paste the full content of `prompts/en/strict-execute.md` to Codex, and replace `<PLAN_DOCUMENT_PATH>` with the actual file path.
 
 Codex's execution report should include:
 

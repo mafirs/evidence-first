@@ -28,23 +28,23 @@ The recommended path is to copy a Prompt template directly.
 4. Send the complete message to your AI coding tool.
 5. Follow the template boundary: read-only stages stay read-only, planning stages only produce a plan, and execution stages only apply confirmed changes.
 
-If all you know is that something is broken, start with `prompts/en/01-diagnose.md`.
+If all you know is that something is broken, start with `prompts/en/diagnose.md`.
 
 ## Choose a template by situation
 
 | Stage | Current situation | Template |
 |---|---|---|
-| Diagnose | Find the cause of a bug or locate relevant code | `prompts/en/01-diagnose.md` |
-| Route | You have an idea and want the AI to challenge it | `prompts/en/03-route-with-user-idea.md` |
-| Route | You have context but no good route yet, or you need the agent to propose one | `prompts/en/04-route-without-user-idea.md` |
-| Plan | You need a small change plan without editing code | `prompts/en/05-small-plan.md` |
-| Plan | You need a multi-file or complex change plan | `prompts/en/06-large-plan.md` |
-| Execute | You approved a small plan and need to execute it | `prompts/en/07-small-execute.md` |
-| Execute | You approved a large plan and need strict execution | `prompts/en/08-strict-execute.md` |
-| Review | You want another agent to review an early idea with code access | `prompts/en/09-early-idea-review-with-code.md` |
-| Review | You want another agent to review an early idea from conversation only | `prompts/en/10-early-idea-review-from-chat.md` |
-| Review | You want a final adversarial review before execution | `prompts/en/11-final-plan-review.md` |
-| Review | You need to triage another agent's critique without blindly accepting it | `prompts/en/12-review-response-triage.md` |
+| Diagnose | Find the cause of a bug or locate relevant code | `prompts/en/diagnose.md` |
+| Route | You have an idea and want the AI to challenge it | `prompts/en/route-with-user-idea.md` |
+| Route | You have context but no good route yet, or you need the agent to propose one | `prompts/en/route-without-user-idea.md` |
+| Plan | You need a small change plan without editing code | `prompts/en/small-plan.md` |
+| Plan | You need a multi-file or complex change plan | `prompts/en/large-plan.md` |
+| Execute | You approved a small plan and need to execute it | `prompts/en/small-execute.md` |
+| Execute | You approved a large plan and need strict execution | `prompts/en/strict-execute.md` |
+| Review | You want another agent to review an early idea with code access | `prompts/en/early-idea-review-with-code.md` |
+| Review | You want another agent to review an early idea from conversation only | `prompts/en/early-idea-review-from-chat.md` |
+| Review | You want a final adversarial review before execution | `prompts/en/final-plan-review.md` |
+| Review | You need to triage another agent's critique without blindly accepting it | `prompts/en/review-response-triage.md` |
 
 ## Five-stage workflow
 

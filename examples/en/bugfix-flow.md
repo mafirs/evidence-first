@@ -12,9 +12,9 @@ You found a bug in a task management app:
 
 You are not sure whether the problem is in the front-end state, the API request, the back-end save logic, or the cache refresh.
 
-## Step 1: Use 01-diagnose to locate the problem
+## Step 1: Use diagnose to locate the problem
 
-Write a clear description of the symptom at the top of your message. Add a separator line. Then paste the full content of `prompts/en/01-diagnose.md`.
+Write a clear description of the symptom at the top of your message. Add a separator line. Then paste the full content of `prompts/en/diagnose.md`.
 
 ```text
 Current bug: on the task detail page, clicking "Complete" briefly shows the task as complete; after refreshing the page, the task shows as incomplete again.
@@ -29,7 +29,7 @@ Reproduction steps:
 Please confirm whether this bug exists and locate where it actually comes from.
 
 ————————
-[paste the full content of prompts/en/01-diagnose.md]
+[paste the full content of prompts/en/diagnose.md]
 ```
 
 Codex's output should include:
@@ -41,9 +41,9 @@ Codex's output should include:
 
 **Stop signal**: Codex gives a fix without reading the code, or says "I suggest you check X" instead of giving conclusions based on actually reading the code — stop, ask it to read the code first and output only analysis, not a diff.
 
-## Step 2: Use 04-route to ask Codex for route options
+## Step 2: Use route-without-user-idea to ask Codex for route options
 
-After diagnosis, if you still have no good route, add 04-route-without-user-idea to the same conversation.
+After diagnosis, if you still have no good route, add route-without-user-idea to the same conversation.
 
 ```text
 The problem has been located above, but I don't have a fix route yet.
@@ -51,7 +51,7 @@ The problem has been located above, but I don't have a fix route yet.
 Based on the current conversation context, give me route options. Read only, no edits, no diff output.
 
 ————————
-[paste prompts/en/04-route-without-user-idea.md full content]
+[paste prompts/en/route-without-user-idea.md full content]
 ```
 
 Codex's output should include:
@@ -64,9 +64,9 @@ Codex's output should include:
 
 Choose a route before moving to the next step.
 
-## Step 3: Use 05-small-plan to get an implementation plan
+## Step 3: Use small-plan to get an implementation plan
 
-After confirming the route, use 05-small-plan in the same conversation.
+After confirming the route, use small-plan in the same conversation.
 
 ```text
 I am going with this route: fix the task completion state not being correctly persisted.
@@ -74,7 +74,7 @@ I am going with this route: fix the task completion state not being correctly pe
 Based on the discussion above, give me a small-scope plan. Do not edit any code.
 
 ————————
-[paste prompts/en/05-small-plan.md full content]
+[paste prompts/en/small-plan.md full content]
 ```
 
 Codex's output should include:
@@ -88,12 +88,12 @@ Codex's output should include:
 
 **Stop signal**: The plan includes "also cleaned up X formatting" or "refactored Y while I was at it" — ask Codex to move these out of the diff and into the extra findings section.
 
-## Step 4: Use 07-small-execute to run the plan
+## Step 4: Use small-execute to run the plan
 
 After confirming the plan, continue in the same conversation. This template does not need additional context — just paste the full content and send it.
 
 ```text
-[paste prompts/en/07-small-execute.md full content]
+[paste prompts/en/small-execute.md full content]
 ```
 
 Codex should check `git status` first, then apply the plan diffs mechanically.

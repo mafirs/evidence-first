@@ -12,9 +12,9 @@
 
 你不确定问题在前端状态、API 请求、后端保存逻辑，还是缓存刷新。
 
-## 第一步：用 01-diagnose 定位问题
+## 第一步：用 diagnose 定位问题
 
-在消息开头写清楚问题现象，加分隔线，然后复制 `prompts/zh-CN/01-diagnose.md` 的完整内容。
+在消息开头写清楚问题现象，加分隔线，然后复制 `prompts/zh-CN/diagnose.md` 的完整内容。
 
 ```text
 当前有个问题：任务详情页点击"完成"后，界面短暂显示完成；刷新页面后又变为未完成。
@@ -29,7 +29,7 @@
 请确认是否确实存在这个问题，并定位它实际来自哪里。
 
 ————————
-[粘贴 prompts/zh-CN/01-diagnose.md 完整内容]
+[粘贴 prompts/zh-CN/diagnose.md 完整内容]
 ```
 
 Codex 的输出应该包含：
@@ -41,9 +41,9 @@ Codex 的输出应该包含：
 
 **停下的信号**：Codex 没读代码就给出修法，或者给的是"建议你检查一下 X"而不是读代码后的实际结论——停下，让它先读代码，只输出分析，不输出 diff。
 
-## 第二步：用 04-route 让 Codex 给路线
+## 第二步：用 route-without-user-idea 让 Codex 给路线
 
-定位之后你还没有好路线，把 04-route-without-user-idea 加进同一个对话。
+定位之后你还没有好路线，把 route-without-user-idea 加进同一个对话。
 
 ```text
 上面已经定位到问题，但我还没有确定修法。
@@ -51,7 +51,7 @@ Codex 的输出应该包含：
 请基于当前对话上下文给出可选路线。本轮只读不改，不要输出 diff。
 
 ————————
-[粘贴 prompts/zh-CN/04-route-without-user-idea.md 的完整内容]
+[粘贴 prompts/zh-CN/route-without-user-idea.md 的完整内容]
 ```
 
 Codex 的输出应该包含：
@@ -64,9 +64,9 @@ Codex 的输出应该包含：
 
 进入下一步前，你需要选定一条路线。
 
-## 第三步：用 05-small-plan 出修改方案
+## 第三步：用 small-plan 出修改方案
 
-选定路线后，在同一个对话里用 05-small-plan 让 Codex 出小修方案。
+选定路线后，在同一个对话里用 small-plan 让 Codex 出小修方案。
 
 ```text
 我选择路线：修复任务完成状态没有被正确持久化的问题。
@@ -74,7 +74,7 @@ Codex 的输出应该包含：
 请基于上面的讨论给出小修方案，不要直接改代码。
 
 ————————
-[粘贴 prompts/zh-CN/05-small-plan.md 的完整内容]
+[粘贴 prompts/zh-CN/small-plan.md 的完整内容]
 ```
 
 Codex 的输出应该包含：
@@ -88,12 +88,12 @@ Codex 的输出应该包含：
 
 **停下的信号**：方案里出现"顺便调整了 X 格式"或"同时重构了 Y 函数"——要求 Codex 把这些移出 diff，只留在"额外发现"区。
 
-## 第四步：用 07-small-execute 执行方案
+## 第四步：用 small-execute 执行方案
 
-确认方案内容后，在同一个对话里继续。07-small-execute 不需要额外上下文，直接复制完整内容发送。
+确认方案内容后，在同一个对话里继续。small-execute 不需要额外上下文，直接复制完整内容发送。
 
 ```text
-[粘贴 prompts/zh-CN/07-small-execute.md 的完整内容]
+[粘贴 prompts/zh-CN/small-execute.md 的完整内容]
 ```
 
 Codex 应该先检查 `git status`，再机械应用方案里的 diff。
