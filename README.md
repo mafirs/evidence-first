@@ -42,6 +42,7 @@ If all you know is that something is broken, start with `prompts/en/01-diagnose.
 | Execute | You approved a small plan and need to execute it | `prompts/en/07-small-execute.md` |
 | Execute | You approved a large plan and need strict execution | `prompts/en/08-strict-execute.md` |
 | Review | You want another agent to review an early idea with code access | `prompts/en/09-early-idea-review-with-code.md` |
+| Review | You want another agent to review an early idea from conversation only | `prompts/en/10-early-idea-review-from-chat.md` |
 | Review | You want a final adversarial review before execution | `prompts/en/11-final-plan-review.md` |
 | Review | You need to triage another agent's critique without blindly accepting it | `prompts/en/12-review-response-triage.md` |
 

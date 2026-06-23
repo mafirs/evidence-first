@@ -14,7 +14,7 @@ You are not sure whether the problem is in the front-end state, the API request,
 
 ## Step 1: Use 01-diagnose to locate the problem
 
-Write a clear description of the symptom at the top of your message. Add a separator line. Then paste the full content of `prompts/en/01-diagnose.md`, **deleting its first line** (the template's first line is `——————————`, which duplicates the separator you already added).
+Write a clear description of the symptom at the top of your message. Add a separator line. Then paste the full content of `prompts/en/01-diagnose.md`.
 
 ```text
 Current bug: on the task detail page, clicking "Complete" briefly shows the task as complete; after refreshing the page, the task shows as incomplete again.
@@ -29,7 +29,7 @@ Reproduction steps:
 Please confirm whether this bug exists and locate where it actually comes from.
 
 ————————
-[paste prompts/en/01-diagnose.md content, deleting the first line]
+[paste the full content of prompts/en/01-diagnose.md]
 ```
 
 Codex's output should include:
