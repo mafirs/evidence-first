@@ -1,7 +1,3 @@
-# Generate Project-level Agent Rules for the Current Repository
-
-This is a general-purpose Prompt for Codex, Claude Code, or any AI coding agent that can read repository files. Its goal is to make the agent read the current repository and generate a project-level agent rules file, such as `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, or an equivalent file chosen by the team.
-
 Your task: read the current repository, combine the facts with the default working invariants below, and generate a project-level agent rules file.
 The default target is `AGENTS.md` at the repository root. If the user specifies `CLAUDE.md`, `.cursorrules`, or another equivalent file, use the user's target.
 This round may only create or overwrite the user-specified project-level agent rules file. If no target is specified, it may only create or overwrite root `AGENTS.md`. Do not modify any other file. Do not run commands that change project state. Read-only commands such as `git log`, `ls`, and `cat` are allowed.

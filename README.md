@@ -91,22 +91,16 @@ The Skill loads stable stage rules and can reduce repeated protocol text. But it
 
 Do not edit files under `skills/evidence-first-dev-workflow/` to paste one-off task context. Skill files are stable rules, not scratchpads.
 
-## Project-level integrations
-
-If you want to put these rules into project-level constraints, see:
-
-- `integrations/AGENTS.md`: Codex-style project instructions.
-- `integrations/CLAUDE.md`: Claude Code project instructions.
-- `integrations/cursor-rules.mdc`: Cursor rules.
-
-These integrations are useful for long-term agent behavior constraints. For day-to-day work on a specific issue, the recommended path is still to copy the matching Prompt template.
-
 ## Rule templates
 
 If you want to adapt this workflow to your own tools or repositories:
 
-- `rules/global-agent-rules.en.md`: global agent rules template for Codex, Claude Code, Cursor, or similar tools.
-- `rules/generate-project-agent-rules.en.md`: a project-level rules generator Prompt for Codex, Claude Code, or other AI coding agents to read the current repository and generate `AGENTS.md`, `CLAUDE.md`, or an equivalent rules file.
+- `rules/global-agent-rules.en.md`: global agent rules content that can be copied into Codex, Claude Code, Cursor, or `AGENTS.md`-style rules files.
+- `rules/global-agent-rules.zh-CN.md`: Chinese global agent rules content.
+- `rules/generate-project-agent-rules.en.md`: a project-level rules generator Prompt for Codex, Claude Code, or other AI coding agents to read the current repository and generate `AGENTS.md`, `CLAUDE.md`, Cursor rules, or an equivalent rules file.
+- `rules/generate-project-agent-rules.zh-CN.md`: Chinese project-level rules generator Prompt.
+
+Use `global-agent-rules` when you want long-term default behavior for a tool. Use `generate-project-agent-rules` when you want an agent to generate rules for a specific repository.
 
 ## Safety boundaries
 
@@ -128,7 +122,6 @@ docs/                     Workflow notes and context injection guidance
 prompts/zh-CN/            Chinese Prompt templates
 prompts/en/               English Prompt templates
 skills/evidence-first-dev-workflow/  Codex Skill auxiliary entry
-integrations/             AGENTS.md / CLAUDE.md / Cursor rules
 rules/                    Global rules templates and project-level rules generator
 examples/                 Chinese example flows
 examples/en/              English example flows

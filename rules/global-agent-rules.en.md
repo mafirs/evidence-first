@@ -1,7 +1,3 @@
-# Global Agent Rules Template
-
-This is a reusable global rules template for AI coding agents. It can be copied into Codex, Claude Code, Cursor, or another tool's global instructions. Adjust language, tool capabilities, and safety requirements for your own environment.
-
 ## 1. Core layer — applies in all situations
 
 ### Response style

@@ -1,7 +1,3 @@
-# 为当前仓库生成项目级 Agent 规则
-
-这是一份通用 Prompt，适用于 Codex、Claude Code 或其他能读取仓库文件的 AI coding agent。目标是让 agent 实读当前仓库，并生成项目级 agent 规则文件，例如 `AGENTS.md`、`CLAUDE.md`、`.cursorrules` 或团队指定的等价文件。
-
 你的任务：实读当前仓库，结合下方【默认工作习惯不变量】，生成一份项目级 agent 规则文件。
 默认目标文件为仓库根目录 `AGENTS.md`；如果用户指定 `CLAUDE.md`、`.cursorrules` 或其他等价文件，以用户指定为准。
 本轮只允许创建 / 覆盖用户指定的项目级 agent 规则文件；未指定时只允许创建 / 覆盖仓库根目录 `AGENTS.md`。不许改动任何其他文件，不许执行会改变项目状态的命令（只读命令如 `git log`、`ls`、`cat` 允许）。
