@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Evidence-first Dev Workflow is a staged Prompt workflow for AI coding: read code first, compare routes, confirm the plan, execute strictly, then close with verification and adversarial review.
+Evidence-first Dev Workflow is a staged Prompt workflow for AI coding: read code to locate the problem, compare routes, use adversarial review and triage to stabilize the direction, write and review the plan document, then execute strictly at the end.
 
 It is not a universal Prompt, and it is not an autopilot flow that asks AI to go from request to production in one jump. Its goal is narrower: when you already use AI for coding but often get burned by guessing, scope creep, or premature implementation, these staged templates pull the agent back to evidence, boundaries, and verification.
 
@@ -37,32 +37,41 @@ If all you know is that something is broken, start with `prompts/en/diagnose.md`
 | Diagnose | Find the cause of a bug or locate relevant code | `prompts/en/diagnose.md` |
 | Route | You have an idea and want the AI to challenge it | `prompts/en/route-with-user-idea.md` |
 | Route | You have context but no good route yet, or you need the agent to propose one | `prompts/en/route-without-user-idea.md` |
-| Plan | You need a small change plan without editing code | `prompts/en/small-plan.md` |
-| Plan | You need a multi-file or complex change plan | `prompts/en/large-plan.md` |
-| Execute | You approved a small plan and need to execute it | `prompts/en/small-execute.md` |
-| Execute | You approved a large plan and need strict execution | `prompts/en/strict-execute.md` |
 | Review | You want another agent to review an early idea with code access | `prompts/en/early-idea-review-with-code.md` |
 | Review | You want another agent to review an early idea from conversation only | `prompts/en/early-idea-review-from-chat.md` |
+| Triage | You need to verify another agent's review before continuing | `prompts/en/review-response-triage.md` |
+| Plan | You need a small change plan without editing code | `prompts/en/small-plan.md` |
+| Plan | You need a multi-file or complex change plan | `prompts/en/large-plan.md` |
 | Review | You want a final adversarial review before execution | `prompts/en/final-plan-review.md` |
-| Review | You need to triage another agent's critique without blindly accepting it | `prompts/en/review-response-triage.md` |
+| Triage | You need to decide whether to revise the plan, return to route selection, or execute | `prompts/en/review-response-triage.md` |
+| Execute | You approved a small plan and need to execute it | `prompts/en/small-execute.md` |
+| Execute | You approved a large plan and need strict execution | `prompts/en/strict-execute.md` |
 
-## Five-stage workflow
+## Main flow and two review loops
 
 ```mermaid
-flowchart LR
-  A["Diagnose\nread-only code"] --> B["Route\ncompare fixes"]
-  B --> C["Plan\nwrite the\nimplementation plan"]
-  C --> D["Execute\napply the confirmed diff"]
-  D --> E["Review\nverify and close out"]
+flowchart TD
+  A["Diagnose\nread code"] --> B["Route\ncompare fixes"]
+  B --> C["Early review\nanother agent challenges"]
+  C --> D["Triage review\nCodex verifies critique"]
+  D -->|direction not stable| B
+  D -->|direction holds| E["Plan document\nwrite the implementation plan"]
+  E --> F["Plan review\nanother agent reviews"]
+  F --> G["Triage review\nCodex verifies critique"]
+  G -->|revise plan| E
+  G -->|change route| B
+  G -->|ready to execute| H["Execute\napply confirmed diff"]
 ```
 
 1. **Diagnose**: read code only, cite file-line evidence, and separate fact from inference.
 2. **Route**: compare mechanisms before writing diffs.
-3. **Plan**: produce the implementation plan without editing code.
-4. **Execute**: apply only the confirmed diff, with no opportunistic refactor.
-5. **Review**: challenge findings, verify critiques, and archive low-value comments.
+3. **Early review**: send the route to another agent for adversarial review.
+4. **Triage review**: Codex verifies the critique and decides whether to repeat review, change route, or plan.
+5. **Plan**: produce the implementation plan without editing code.
+6. **Plan review**: send the plan document to another agent for final review.
+7. **Execute**: after review and triage pass, apply only the confirmed diff.
 
-The core principles are evidence discipline, phase separation, minimal change, and verification closure.
+The core principles are evidence discipline, phase separation, minimal change, and verification before execution.
 
 ## How to fill task context
 
@@ -129,7 +138,7 @@ examples/en/              English example flows
 
 - `docs/stage-guide.md`: choose the right stage and usage mode.
 - `docs/context-injection.md`: where task context should go.
-- `docs/workflow.md`: overview of the five-stage workflow.
+- `docs/workflow.md`: overview of the main flow and review loops.
 - `examples/en/bugfix-flow.md`: bugfix flow example.
 - `examples/en/feature-flow.md`: feature development flow example.
 - `examples/en/adversarial-review-flow.md`: adversarial review flow example.

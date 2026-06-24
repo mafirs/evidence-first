@@ -1,6 +1,10 @@
 # Review Stage
 
-Use this stage for final plan review or for triaging another AI's critique.
+Use this stage for early idea review, final plan review, or triaging another AI's critique.
+
+## Early idea review
+
+Check whether the current direction solves the original request, whether its code claims are read-confirmed, whether a smaller route exists, and whether the direction can advance to a plan document. Do not write implementation code.
 
 ## Final plan review
 

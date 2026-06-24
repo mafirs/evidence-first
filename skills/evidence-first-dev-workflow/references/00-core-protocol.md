@@ -10,9 +10,10 @@
 
 - Diagnosis explains what is happening.
 - Route comparison chooses a mechanism.
-- Planning writes a diff proposal.
-- Execution applies only an approved diff.
-- Review checks whether the plan or critique is valid.
+- Review checks whether the direction, plan, or critique is valid.
+- Review triage decides whether to repeat review, revise the direction, revise the plan, or execute.
+- Planning writes a diff proposal after the direction is stable.
+- Execution applies only an approved and reviewed diff.
 
 ## Minimal change rule
 

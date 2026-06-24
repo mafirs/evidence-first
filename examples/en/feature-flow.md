@@ -60,9 +60,24 @@ Claude's output should include:
 
 If Claude does not have code access, use `prompts/en/early-idea-review-from-chat.md` instead, but this path is generally less reliable than the code-access early review path.
 
-## Step 3: Ask Codex for an implementation plan
+## Step 3: Send the early review back to Codex for direction triage
 
-After the route is confirmed, choose small-plan or large-plan based on scope, in the same Codex conversation.
+Copy Claude's full output to Codex and use `prompts/en/review-response-triage.md`.
+
+```text
+Below is Claude's early review of the current route. Do not accept it as-is — turn it into a decision checklist for whether this direction should continue.
+
+[Claude's full output]
+
+————————
+[paste prompts/en/review-response-triage.md full content]
+```
+
+If Codex says the current route is not stable, return to Step 1 or Step 2. If the route holds, write the plan document.
+
+## Step 4: Ask Codex for a plan document
+
+After the route has passed early review and triage, choose small-plan or large-plan based on scope, in the same Codex conversation.
 
 ```text
 I am going with this route: reuse the back-end search API, extend query scope on the server side to include body content, and keep the existing permission filtering.
@@ -83,7 +98,7 @@ Codex's output should include:
 
 **Stop signal**: The plan includes a change categorized as "other" that is still in the diff, or the "business impact" section uses code terminology — ask Codex to remove out-of-scope changes and rewrite the impact in user behavior terms.
 
-## Step 4: Send the plan to Claude for a final adversarial review
+## Step 5: Send the plan document to Claude for a final adversarial review
 
 Copy Codex's full plan to Claude and use `prompts/en/final-plan-review.md`.
 
@@ -93,7 +108,7 @@ Claude should only flag things that will cause real problems if left in, or that
 
 **Stop signal**: Claude suggests "add more tests/logs/comments" with no specific location, or raises a problem without citing where — archive those items; do not let them enter the plan.
 
-## Step 5: Send Claude's review back to Codex for verification
+## Step 6: Send Claude's review back to Codex for verification
 
 Copy Claude's full output to Codex and use `prompts/en/review-response-triage.md`.
 
@@ -115,7 +130,7 @@ Codex's output should include:
 
 **Stop signal**: Codex marks an item "confirmed" or "not confirmed" without opening the relevant file — ask it to read the code first; without opening the file, the only valid verdict is "cannot determine."
 
-## Step 6: Execute the confirmed plan
+## Step 7: Execute the confirmed plan
 
 Choose the execution template based on plan size:
 
@@ -138,7 +153,7 @@ Codex's execution report should include:
 
 - Asking Codex to implement your idea directly because you proposed it.
 - Discussing performance and permissions without reading the code first.
-- Moving to the plan stage before the route is confirmed.
+- Moving to the plan stage before early route review and triage.
 - Running execution without a final review.
 - Blindly accepting or rejecting Claude's critique without having Codex verify each item.
 - Letting unconfirmed changes sneak into execution.
@@ -147,6 +162,6 @@ Codex's execution report should include:
 
 - Code evidence for whether the current gap is real.
 - An explicit verdict on your initial idea.
-- One selected implementation route.
+- One selected implementation route that has passed early review and triage.
 - A plan that has passed final review and verification.
 - A change applied strictly according to the confirmed plan.

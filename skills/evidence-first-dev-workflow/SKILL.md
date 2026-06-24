@@ -1,6 +1,6 @@
 ---
 name: evidence-first-dev-workflow
-description: Use when Codex is asked to diagnose, plan, implement, review, or execute software changes using an evidence-first AI-native development workflow. Triggers include bug investigation, codebase diagnosis, route comparison, implementation planning, surgical diff execution, adversarial code review, responding to another AI's critique, or preventing speculative/overbroad AI coding changes. The workflow enforces code reading before claims, file:line evidence, fact-vs-inference labels, staged separation, minimal changes, and verification before completion.
+description: Use when Codex is asked to diagnose, route, review, triage, plan, or execute software changes using an evidence-first AI-native development workflow. Triggers include bug investigation, codebase diagnosis, route comparison, early adversarial review, critique triage, implementation planning, final plan review, surgical diff execution, or preventing speculative/overbroad AI coding changes. The workflow enforces code reading before claims, file:line evidence, fact-vs-inference labels, staged separation, minimal changes, and verification before completion.
 ---
 
 # Evidence-first Dev Workflow
@@ -11,9 +11,9 @@ Use this Skill as a stage router. Do not load every reference by default. Load o
 
 - Diagnose a bug or locate relevant code: read `references/01-diagnose.md`.
 - Compare possible routes: read `references/02-route.md`.
+- Review an early idea, review a plan, or triage another AI's critique: read `references/05-review.md`.
 - Write an implementation plan without editing code: read `references/03-plan.md`.
-- Execute an approved plan: read `references/04-execute.md`.
-- Review a plan or another AI's critique: read `references/05-review.md`.
+- Execute an approved and reviewed plan: read `references/04-execute.md`.
 - Prepare final delivery: read `references/06-closeout.md`.
 
 ## Always-on protocol

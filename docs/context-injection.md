@@ -30,7 +30,9 @@ Context:
 Read the relevant code before judging whether the idea should proceed.
 ```
 
-## Pattern 3: execution from a plan document
+## Pattern 3: execution from an accepted plan document
+
+Use this only after the plan document has been reviewed and the review has been triaged.
 
 ```text
 Use evidence-first-dev-workflow and enter strict execution stage.

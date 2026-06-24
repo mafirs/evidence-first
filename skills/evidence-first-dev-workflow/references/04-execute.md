@@ -1,6 +1,6 @@
 # Execute Stage
 
-Use this stage only after a plan is approved.
+Use this stage only after a plan has been reviewed, triaged, and approved for execution.
 
 ## Before execution
 

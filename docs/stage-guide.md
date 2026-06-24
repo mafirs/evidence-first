@@ -22,6 +22,10 @@ Do not edit Skill files or references to paste task context. Provide context in 
 
 See `docs/context-injection.md` for examples.
 
+## Typical order
+
+Diagnose the issue, compare routes, run early review, triage that review, and repeat that review loop until the direction is stable. Then write the plan document, review the document, triage the review, and execute only after the plan is accepted.
+
 ## Choose the stage
 
 | Situation | Stage | Prompt template | Skill-mode request |
@@ -29,14 +33,14 @@ See `docs/context-injection.md` for examples.
 | You only know the symptom | Diagnose | `diagnose.md` | “Use evidence-first-dev-workflow to diagnose this issue. Context: …” |
 | You have an idea but want it challenged | Route | `route-with-user-idea.md` | “Use the route-with-user-idea stage. My idea is …” |
 | You have context but no good route yet | Route | `route-without-user-idea.md` | “Use the route-without-user-idea stage. Context: …” |
-| You need a small bugfix or small feature plan | Plan | `small-plan.md` | “Use the small-plan stage. Do not edit files.” |
-| You need a large feature or wide logic-change plan | Plan | `large-plan.md` | “Use the large-plan stage. Do not edit files.” |
-| You approved a small plan | Execute | `small-execute.md` | “Use strict execution for the approved small plan.” |
-| You approved a large plan | Execute | `strict-execute.md` | “Use strict execution for `<PLAN_DOCUMENT_PATH>`.” |
 | You want another agent to review an early idea with code access | Review | `early-idea-review-with-code.md` | “Review this early idea with code access. Context: …” |
 | You want another agent to review an early idea from chat only | Review | `early-idea-review-from-chat.md` | “Review this early idea from conversation only. Context: …” |
+| The original conversation agent needs to triage another agent's review | Triage | `review-response-triage.md` | “Use review-response triage. Review text: …” |
+| You need a small bugfix or small feature plan | Plan | `small-plan.md` | “Use the small-plan stage. Do not edit files.” |
+| You need a large feature or wide logic-change plan | Plan | `large-plan.md` | “Use the large-plan stage. Do not edit files.” |
 | Another agent should review a formal plan before execution | Review | `final-plan-review.md` | “Review this final plan before execution. Plan: …” |
-| The original conversation agent needs to triage another agent's review | Review | `review-response-triage.md` | “Use review-response triage. Review text: …” |
+| You approved a small plan after review and triage | Execute | `small-execute.md` | “Use strict execution for the approved small plan.” |
+| You approved a large plan after review and triage | Execute | `strict-execute.md` | “Use strict execution for `<PLAN_DOCUMENT_PATH>`.” |
 
 ## Rule of thumb
 

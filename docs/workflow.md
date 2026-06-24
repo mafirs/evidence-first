@@ -1,23 +1,27 @@
 # Workflow
 
-This workflow has five stages.
+This workflow is not a straight line from route selection to execution. It has one main path and two review loops.
 
-## 1. Diagnose
+## Main path
 
-Read the relevant code before making claims. Every key claim must cite a file and line number or be marked as an assumption.
+1. Diagnose the issue by reading the relevant code.
+2. Compare routes and choose a direction.
+3. Run an early adversarial review of that direction.
+4. Triage the early review: Codex verifies the critique and decides whether the direction holds.
+5. Repeat early review and triage until the direction is stable.
+6. Write the plan document.
+7. Send the plan document to another agent for review.
+8. Triage the plan review: Codex verifies the critique and decides whether to revise the plan, return to route selection, run another review, or execute.
+9. Execute only after the plan is accepted.
 
-## 2. Route
+## Direction review loop
 
-Compare possible routes before writing implementation details. The goal is to choose the right mechanism, not to write code early.
+Use this loop before writing the plan document. The reviewer challenges whether the current route solves the original problem, whether it is grounded in code, and whether a smaller route exists. Codex then verifies the review and either keeps the direction, changes it, or asks for a user decision.
 
-## 3. Plan
+## Plan review loop
 
-Write a surgical implementation plan with diffs, evidence, business impact, regression checks, and explicit non-goals. Do not edit code in this stage.
+Use this loop after the plan document exists. The reviewer checks whether the plan still solves the original request, stays inside scope, uses read-confirmed code facts, and avoids execution risks. Codex then verifies the review and either revises the plan, sends it for another review, returns to route selection, or executes.
 
-## 4. Execute
+## Execution
 
-Apply only the confirmed diff. Do not refactor, reformat, rename, or fix unrelated issues. If the plan no longer matches the current code, stop and report the conflict.
-
-## 5. Review
-
-Review the final plan or another AI's critique. Accept only evidence-backed findings. Archive low-value or speculative comments.
+Execution is the last step. Apply only the confirmed diff. Do not refactor, reformat, rename, or fix unrelated issues. If the plan no longer matches the current code, stop and report the conflict.

@@ -4,7 +4,7 @@ globs: ["**/*"]
 alwaysApply: false
 ---
 
-Use the evidence-first workflow for diagnosis, route comparison, implementation planning, strict execution, and adversarial review.
+Use the evidence-first workflow for diagnosis, route comparison, adversarial review, review triage, implementation planning, final plan review, and strict execution.
 
 Key rules:
 

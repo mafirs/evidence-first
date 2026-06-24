@@ -88,7 +88,7 @@ Hard constraints
 - Include only corrective rules. Every line should prevent a specific model mistake.
 - Keep repository facts separate from working habits: commands, architecture, and conventions must come from files you read; working habits come from the invariants above.
 - Do not write the following into the project-level rules file:
-  - Full multi-stage workflow orchestration such as diagnose → plan → review → execute. That belongs in on-demand prompts or skills, not persistent rules.
+  - Full multi-stage workflow orchestration such as diagnose → route → review triage loop → plan → plan review → execute. That belongs in on-demand prompts or skills, not persistent rules.
   - Detailed output templates such as six-section plan formats or point-by-point review formats.
   - Generic advice such as “write high-quality code” or “handle edge cases”.
   - Any repository fact you did not verify by reading.
