@@ -4,27 +4,28 @@ description: "Small execute: mechanically apply the small plan just produced and
 disable-model-invocation: true
 ---
 
-Execute the plan you just output.
+Execute the code changes according to the plan you just output.
 
 ## Execution scope
 
-- Execute every diff listed under "what to change": apply required and safety/robustness items; skip optional items.
-- Do not touch files, functions, or lines not listed in the plan.
-- Business impact, regression tests, extra findings, and other sections are reference information, not execution items.
+- Execute the diffs in [What to change]: all (a) required and (b) safety/robustness-required changes; skip (c) optional optimizations
+- Do not change files, functions, or lines not listed in the plan
+- The other sections (business impact, regression testing, etc.) are reference information, not execution items
+- Do not start sub-agents to modify code in parallel this round; apply the plan item by item, verify, and report as a whole yourself; do not split a small task among several writers
 
-## Execute
+## Execution
 
-- Check whether any tracked files have uncommitted changes. If so, note this in one sentence at the start of your report. Ignore untracked files.
-- Apply diffs mechanically: no reformatting, no added comments, no refactoring, no opportunistic bug fixes.
-- If a diff does not match the current code, or if a plan assumption no longer holds, skip that diff and record it — do not guess at how to apply it.
-- If compilation or type checking fails, report it as-is. Do not self-correct unless the failure is a purely mechanical slip from applying the diff (missing import, mismatched bracket, obvious typo) — if you self-correct, list what you fixed.
-- If you find a bug or risk outside the plan, note it and do not touch it.
+- Check whether tracked files have uncommitted changes; if so, note it in one sentence at the start of the report (ignore untracked files)
+- Apply the diffs mechanically: no reformatting, no added comments, no refactoring, no fixing bugs along the way
+- If a diff does not match the current code, or a plan [assumption] does not hold, skip that diff; do not guess how to apply it
+- If compilation / type checking fails, paste it as is; do not fix it yourself
+- If you find bugs or hidden risks outside the plan, note them and do not touch them
 
 ## Report
 
-1. Which files you changed and which plan diff each corresponds to.
-2. Diffs you skipped and why.
-3. Compilation and type checking result.
-4. Brief self-review: does the change match the plan? Any doubts?
-5. Issues found but not handled.
-6. Confirmation that files outside the plan were not touched.
+1. Which files were changed + which plan diff each corresponds to
+2. Diffs not executed and why
+3. Compilation / type-check results
+4. Brief self-review: do the changes match the plan, any doubts
+5. Problems found but not handled
+6. Confirmation of untouched areas

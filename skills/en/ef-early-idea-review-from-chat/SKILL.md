@@ -4,7 +4,7 @@ description: "Early idea review (chat only): review another agent's early idea f
 disable-model-invocation: true
 ---
 
-Below is the conversation between a user and another coding agent about a request, including the user's goal and the agent's initial direction. This is not a final implementation plan:
+Below is the conversation context between me and another coding agent about a requirement, including my requirement and the initial idea that agent proposed (not the final plan):
 
 ```text
 <PASTE_CONVERSATION_CONTEXT_HERE>
@@ -12,72 +12,78 @@ Below is the conversation between a user and another coding agent about a reques
 
 ## Role
 
-You are the reviewer. Judge whether this direction is worth advancing to the formal implementation plan stage.
+You are the reviewer. Judge whether this idea is worth advancing to the formal plan stage.
 
-## Current stage: direction alignment, not plan review
+## The current stage is idea alignment, not plan review
 
-There is no formal plan yet, no concrete implementation, no SQL, and no API shape.
-
-The following are out of scope for this review. Do not write them even if they come to mind:
-
-- Edge cases.
-- What may break after launch.
-- Concurrent data-write failure scenarios.
-- Any speculation in the form of "if it is implemented this way, then X problem will happen."
-
-Those belong in the formal plan review. Raising them now is overreach.
+There is no formal plan yet, no concrete implementation, no SQL, no API shape.
+The following are out of scope for this review; even if you see them, do not write them:
+- Boundary conditions (null values / concurrency / timeouts / old data / abnormal input)
+- Where it will break after going live
+- Concurrency scenarios where data writes fail
+- Anything of the form "if it is implemented this way, then problem X will occur" — the implementation is not decided yet, do not rehearse it
+These questions are reviewed after the formal plan exists. Reviewing them now is out of turn.
 
 ## Three things to review this round
 
-1. On-target: does this direction solve the user's original request? Is it off-target, missing the original problem, or expanding beyond the original problem?
-2. Based on real code: for the "current codebase state" mentioned in the conversation, which claims have concrete file paths / function names / line numbers, and which claims have no concrete location and look like product-intuition guesswork?
-3. Smaller path: is there a smaller route that avoids redesign and only fixes the direct cause of the original bug?
+1. Relevance
+Does this idea solve the requirement I originally raised? Has it drifted off topic, missed the original problem, or expanded beyond it?
+Pay special attention to what the original bug / original request is, and whether the idea sidesteps the original problem to do something bigger.
 
-## Product semantics gate
+2. Is it based on real code
+For the "current code situation" that agent mentioned, judging from the evidence in the conversation:
+- Which items are "read-confirmed", with specific file paths / function names / line numbers
+- Which items have no specific location and are "suspected guesses" derived from product intuition
+Say directly whether the key engineering premises (data shape, existing logic, call relationships) were really read or guessed.
 
-If the discussion involves multiple product interpretations, first list which interpretation the current direction uses. Every issue must state which interpretation it depends on. Do not list issues that only apply under another interpretation.
+3. Is there a smaller route
+Is this idea necessary? Has a smaller route been overlooked — one that solves it without redesigning, by fixing only the direct cause of the original bug?
 
-## Filler label
+## Product semantics gate — mandatory
 
-Every issue must end with: `[critical]` / `[edge]` / `[filler]`.
+If the discussion involves several product semantics (for example meaning A vs. meaning B vs. meaning C), first do one thing:
+List which semantics that agent's current idea adopts.
+After that, every issue you raise must state which semantics it holds under.
+If an issue only holds under another semantics and does not hold under the semantics this idea has chosen — do not list it. That is not a problem; it is a product trade-off.
 
-`[filler]` is allowed. Dressing up low-value issues as `[critical]` is the real problem.
+## Filler label — mandatory
 
-## Prohibited
+Every issue you list must end with one of three labels:
+- [critical] I am confident this is a real problem; it will really cause trouble if not fixed
+- [edge] It holds in theory, but I am not sure whether it would really be triggered in practice
+- [filler] Honestly — if I were not required to list issues, I would not bring it up
 
-- Do not list issues that only arise under adversarial or abnormal usage paths.
-- Do not list existing system trade-offs that this direction does not make worse.
-- Do not give vague suggestions like "add tests / add logs / add comments / add defensive code / refactor / optimize / be more rigorous" without a specific target.
-- Do not write implementation code.
+The [filler] label may be used; there is no penalty. It is more credible than dressing something up as [critical].
+I will not mark you down for labeling [filler], but I will mark you down for disguising [filler] as [critical].
+
+## Forbidden
+
+- Do not list issues that only hold on malicious/abnormal usage paths
+- Do not list existing trade-offs of the current system that this idea does not make worse
+- Do not give non-specific advice like "consider adding unit tests / logging / comments / defensive code / refactoring / optimizing / being more rigorous"
+- Do not give concrete code changes
 
 ## Output format
 
-The review is complete when you output one of the following two forms.
+The review is complete when it ends in one of the following two forms; choose one:
 
-### A. List findings
+(A) Issues listed
+Relevance: [judgment + one or two sentences of reason]
+Based on real code: [list the key engineering premises item by item, each marked "read-confirmed" or "suspected guess"]
+Is there a smaller route: [if yes, describe it; if not, write "none"]
+Product semantics gate (if applicable): [semantics currently chosen]
+Key issues (sorted by importance, most important first):
+  1. [issue description] | semantics it is based on: X | what happens if not fixed: Y | [critical/edge/filler]
+  2. ...
+  3. ...
+  ...
 
-On-target: [judgment + one or two reasons]
-
-Based on real code: [list each key engineering premise, and mark each as "code-confirmed" or "suspected guesswork"]
-
-Smaller path: [if yes, say it; if no, write "none"]
-
-Product semantics gate (if applicable): [current interpretation]
-
-Key issues (by priority):
-
-1. [issue description] | Semantics: X | Consequence if ignored: Y | [critical/edge/filler]
-
-### B. Reviewed, no blocking issue
-
-On-target: [judgment]
-
+(B) Reviewed, no blocking issues
+Relevance: [judgment]
 Based on real code: [list the status of each key engineering premise]
+Is there a smaller route: [if yes, describe it; if not, write "none"]
+Product semantics gate (if applicable): [semantics currently chosen]
+Reviewed-dimensions statement: I reviewed the following dimensions and found no blocking issues — [list the dimensions you actually reviewed, at least 3]
+Conclusion: the idea can advance to the plan stage.
 
-Smaller path: [if yes, say it; if no, write "none"]
-
-Product semantics gate (if applicable): [current interpretation]
-
-Reviewed dimensions declaration: I reviewed the following dimensions and found no blocking issue — [list the actual dimensions reviewed, at least 3]
-
-Conclusion: This direction can advance to the formal plan stage.
+(B) is not a lazy way out. If you choose (B), the "Reviewed-dimensions statement" must be specific; empty phrases like "fully reviewed" are not acceptable.

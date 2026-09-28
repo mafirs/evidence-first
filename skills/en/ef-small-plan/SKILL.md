@@ -4,35 +4,26 @@ description: "Small plan: read the code and propose per-file diffs without editi
 disable-model-invocation: true
 ---
 
-Give an implementation plan. Do not edit code.
+Give me your change plan; do not edit the code directly.
 
-Read the relevant code before planning. Files you have not read must not appear in the plan. Ask at most two critical questions if the answer materially changes the plan; otherwise proceed with labeled assumptions.
+Read the relevant code before writing the plan; files you have not read must not appear in the plan.
+This task does not start sub-agents by default. Only if the actual reading scope unexpectedly spans at least two independent code paths may you use sub-agents in parallel to collect evidence read-only; the plan and diff are still written by you, and every file that goes into the diff must be read by you personally.
+If there are key uncertainties, ask me first (at most 5); for everything else proceed on reasonable assumptions and mark them.
 
-Only change what is required for the request plus necessary safety or boundary handling. Report unrelated issues separately. Do not include them in the diff.
+Change only what the requirement needs + the necessary safety/boundary handling. If you find other problems (bugs, hidden risks, possible optimizations), just tell me; do not slip them into the diff.
 
-## Output
+Output:
 
-### What I read
+**What I read**: files + functions/key locations
 
-Files + functions or key locations.
-
-### What to change
-
-Organize by file:
-
+**What to change** (organized by file):
 - File path
-- Diff with context
-- One-sentence reason
-- Mark inferred current-state claims as `[assumption]`
+- diff (with context)
+- One sentence on why this change
+- Mark anything in the description of the current state that is based on inference as [assumption]
 
-### Business impact
+**Business impact**: what changes I will see after the change, and what stays the same (plain words, no code)
 
-Say what the user will see change and what stays the same. Use plain language.
+**Where to regression-test**: besides the new feature, which existing features to click through to confirm nothing broke
 
-### Regression checks
-
-List existing flows that should be checked beyond the new behavior.
-
-### Extra findings
-
-If any, report unrelated issues only. Do not fix them.
+**Extra findings** (if any): other problems noticed along the way; do not change them, only report them

@@ -4,32 +4,40 @@ description: "Route with your idea: verify the gap, compare your idea fairly wit
 disable-model-invocation: true
 ---
 
-The user has already provided a focus point, current gap, and their own idea. This stage is read-only: produce route comparison and recommendation.
+Above I have given: the focus + the current gap + my own optimization idea. This round is read-only; produce a route comparison and recommendation.
 
-## Validate input before routing
+## Verify the input before proposing routes
 
-- Verify whether the stated gap is real by reading the relevant code. Mark it `[read-confirmed]` or `[assumption-needs-validation]`.
-- Evaluate the user's idea without defaulting to it. State whether it is technically valid, where it would land using `file:symbol`, and whether it has blockers.
+- Verify whether the "current gap" is real: read the relevant code to confirm, and label [read-confirmed] or [assumption-needs-validation]; if you cannot reproduce it, or the actual cause differs from what I said, say so clearly before going further — do not propose routes on a false premise.
+- Evaluate my optimization idea: is it technically sound, where does it land (file:symbol), does it have blocking problems. This step only evaluates and does not take sides — do not assume it is right because I proposed it.
 
-## Route discipline
+## Route generation discipline
 
-- The scope is eliminating the stated gap, not implementing the user's idea. The user's idea is a candidate, not a constraint.
-- Compare the user's idea against other routes in the same table. If it loses, say exactly where and by how much. Do not politely accept it by default.
-- Routes must differ in architecture landing point or mechanism. Produce 1-3 routes. Do not pad.
-- Anchor each route to an existing mechanism or extension point. If a route requires new structure, explain why existing mechanisms cannot be reused.
-- External references are allowed only when they map back to this repository.
-- Each route must state the condition under which it is best.
+- The scope is locked to "removing the gap above", not to "implementing my idea" — my idea is one candidate, not a constraint.
+- By default my idea is one candidate route, compared in the same table and ranked on equal terms with the others: if it is good, recommend it; if another route beats it, say truthfully which dimension it loses on and by how much. No polite acceptance, and no ignoring it either. If the previous step found a blocking problem, instead explain separately why it is out, without forcing it into the comparison table.
+- Real diversity: routes differ in architectural landing point or implementation mechanism; 1–3 routes; if only one route is reasonable, explain why; no padding (differences in wording/parameters do not count as independent routes).
+- Anchor each route to an existing mechanism or extension point (file:symbol); if a route builds a new system from scratch, explain why the existing mechanism cannot be reused.
+- You may search broadly for external references (how similar open-source projects/upstream libraries do it), citing repo + file location; an external approach must map back to a concrete landing point in this codebase, and those that cannot land are not listed.
+- Each route declares "under what premise it is the optimal solution"; a route that cannot answer this does not appear.
+- After the input verification above is complete, if the current tool supports sub-agents and there are at least two candidate mechanisms or external reference paths that can be researched independently, dispatch sub-agents in parallel; all sub-agents must use the same verified gap, requirement scope, and evaluation dimensions, and must not apply a different standard to my idea
+- Each sub-agent studies only one candidate mechanism or external reference path, and returns evidence for that mechanism and its landing point in the project, counter-evidence, unresolved assumptions for each evaluation dimension, and what it did not cover, without ranking or recommending; you make the final comparison and recommendation yourself, not by counting votes
 
 ## Comparison table
 
-Dimensions: architecture fit / intrusion and blast radius / compatibility impact / future extensibility / implementation effort
+Go through every dimension for every route; each cell gets one sentence of evidence location or reasoning (mark the source for what was actually read, and state explicitly when something is inferred):
+Fit with the existing architecture / Intrusion and blast radius / Compatibility breakage / Future extensibility / Implementation effort
 
-## Recommendation
+## Recommendation verdict
 
-Derive the recommendation from the table using this priority: architecture fit > smaller blast radius > compatibility > extensibility > effort.
+- Derive with a fixed priority order: architectural fit > smaller blast radius > compatibility > extensibility > effort; the recommendation may only follow from the comparison table + this order; no reasons from outside the table.
+- If my idea is not preferred, say plainly where it loses and by how much, without hedging.
+- Add reversal conditions: under what premise the recommendation would switch to another route.
 
-If the user's idea is not preferred, say exactly where it loses. Include reversal conditions.
+## Task boundary + handoff
 
-## Handoff
+- This round outputs only the route comparison and recommendation; file-level change lists, diffs, and implementation details belong to the next-stage design Prompt — do not output them.
+- At the end of the verdict, summarize one paragraph for me to carry into the design stage: the chosen route's architectural landing point + key constraints + declared assumptions.
 
-End with: selected landing point + key constraints + declared assumptions.
+## Uncertainties
+
+Ask only questions that would change the ranking or the recommendation, at most 3; for everything else proceed on the most reasonable assumption and note it on the corresponding route.
