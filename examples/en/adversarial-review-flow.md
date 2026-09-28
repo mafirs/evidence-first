@@ -19,7 +19,7 @@ You cannot blindly accept all of this, and you cannot dismiss it just because it
 
 ## Step 1: Send Claude's review back to Codex for verification
 
-Paste Claude's full output to Codex, then paste `prompts/en/review-response-triage.md`.
+Paste Claude's full output to Codex, then paste `skills/en/ef-review-response-triage/SKILL.md`.
 
 ```text
 Below is Claude's critique of the formal plan.
@@ -35,14 +35,14 @@ Claude's findings:
 Your task: do not accept this critique as-is. Verify each item and turn it into a decision checklist for the next version of the plan.
 
 ————————
-[paste prompts/en/review-response-triage.md full content]
+[paste skills/en/ef-review-response-triage/SKILL.md full content]
 ```
 
 Codex's output should include:
 
 - A direction change summary (item by item — phrases like "generally aligned with expectations" are not acceptable).
 - A response to each item, each backed by code evidence, conversation evidence, or product semantics.
-- A disposition for each item: accept / partially accept / reject / needs your decision.
+- For each item, a verdict (confirmed / partly confirmed / not confirmed / cannot determine) and a handling decision (must change direction / expand in the plan stage / defer / reviewer is wrong / needs your decision).
 - An archive list for low-value items.
 
 **Stop signal**: Codex marks item 1 ("permission filtering") as "confirmed" without opening the permission-related code — stop, ask it to read the relevant files first. Without opening the file, the only valid verdict is "cannot determine."
@@ -51,8 +51,8 @@ Codex's output should include:
 
 Based on Codex's verification output, choose your next step:
 
-- **The critique overturns the original route** (e.g., item 1 is confirmed and the plan has no coverage for it): return to `prompts/en/route-with-user-idea.md` or `route-without-user-idea.md` to choose a new route.
-- **The route still holds, the plan needs additional constraints** (e.g., add a permission check step, but the overall approach is unchanged): return to `prompts/en/small-plan.md` or `large-plan.md` to update the plan.
+- **The critique overturns the original route** (e.g., item 1 is confirmed and the plan has no coverage for it): return to `ef-route-with-user-idea` or `ef-route-without-user-idea` to choose a new route.
+- **The route still holds, the plan needs additional constraints** (e.g., add a permission check step, but the overall approach is unchanged): return to `ef-small-plan` or `ef-large-plan` to update the plan.
 - **Only low-value items remain** (e.g., item 3 "add more logs"): archive them and move on — do not change the plan just to look thorough.
 
 **Stop signal**: Accepting everything labeled `[critical]` without verification, or skipping everything labeled `[filler]` without a glance — both are mistakes. `[critical]` still requires Codex to verify; `[filler]` still needs one look to confirm it is actually filler.
@@ -75,7 +75,7 @@ Needs your decision:
 - Whether search result highlighting is in scope for this release (item 2, product trade-off, needs your call)
 
 ————————
-[paste prompts/en/large-plan.md full content]
+[paste skills/en/ef-large-plan/SKILL.md full content]
 ```
 
 The updated plan should include:
@@ -88,7 +88,7 @@ The updated plan should include:
 
 ## Step 4: Run another final review if needed
 
-If the updated plan has changed substantially (e.g., permission verification touches multiple modules), send the new plan to Claude with `prompts/en/final-plan-review.md` for another round.
+If the updated plan has changed substantially (e.g., permission verification touches multiple modules), send the new plan to Claude with `skills/en/ef-final-plan-review/SKILL.md` for another round.
 
 If the changes are small (e.g., only added one permission check in an existing guard), confirm directly and proceed to execution — another full Claude review is not necessary.
 
@@ -104,6 +104,6 @@ If the changes are small (e.g., only added one permission check in an existing g
 
 - A direction change summary.
 - A decision list for each critique item, each with clear evidence.
-- An explicit disposition for every item: accept, partially accept, reject, or cannot determine.
+- An explicit verdict and handling decision for every critique item.
 - Product or engineering trade-offs that need your decision.
 - Specific constraints the next plan version must follow.

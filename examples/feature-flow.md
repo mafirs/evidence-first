@@ -18,7 +18,7 @@
 
 ## 第一步：用 route-with-user-idea 让 Codex 挑战你的想法
 
-先写清楚当前不足、你的想法和担心，加分隔线，然后复制 `prompts/zh-CN/route-with-user-idea.md` 的完整内容。
+先写清楚当前不足、你的想法和担心，加分隔线，然后复制 `skills/zh-CN/ef-route-with-user-idea/SKILL.md` 的完整内容。
 
 ```text
 当前不足：搜索框只能搜文档标题，搜不到正文里的关键词。
@@ -30,7 +30,7 @@
 本轮只读不改。请先验证当前不足是否属实，再评估我的想法是否成立。我的想法只是候选方案，不是硬约束。
 
 ————————
-[粘贴 prompts/zh-CN/route-with-user-idea.md 的完整内容]
+[粘贴 skills/zh-CN/ef-route-with-user-idea/SKILL.md 的完整内容]
 ```
 
 Codex 的输出应该包含：
@@ -44,7 +44,7 @@ Codex 的输出应该包含：
 
 ## 第二步：把 Codex 的讨论上下文发给 Claude 做早期评审
 
-当路线看起来可行，但你想在出正式方案前让 Claude 提前挑刺时，把你和 Codex 的对话上下文复制给 Claude，然后使用 `prompts/zh-CN/early-idea-review-with-code.md`。
+当路线看起来可行，但你想在出正式方案前让 Claude 提前挑刺时，把你和 Codex 的对话上下文复制给 Claude，然后使用 `skills/zh-CN/ef-early-idea-review-with-code/SKILL.md`。
 
 把模板的 `<PASTE_CONVERSATION_CONTEXT_HERE>` 替换为你和 Codex 的关键对话内容。
 
@@ -58,11 +58,11 @@ Claude 的输出应该包含：
 
 **停下的信号**：Claude 的批评没有代码证据，只说"可能会有问题"——要求它给出具体文件和行号，或者承认这是推断而非读代码后的结论。
 
-如果 Claude 没有代码访问能力，改用 `prompts/zh-CN/early-idea-review-from-chat.md`，但这条路线通常不如带代码访问的早期评审可靠。
+如果 Claude 没有代码访问能力，改用 `skills/zh-CN/ef-early-idea-review-from-chat/SKILL.md`，但这条路线通常不如带代码访问的早期评审可靠。
 
 ## 第三步：把早期评审发回 Codex 复核
 
-把 Claude 的完整输出复制给 Codex，使用 `prompts/zh-CN/review-response-triage.md`。
+把 Claude 的完整输出复制给 Codex，使用 `skills/zh-CN/ef-review-response-triage/SKILL.md`。
 
 ```text
 下面是 Claude 对当前路线的早期评审。不要照单全收，请把它转成是否继续当前方向的决策清单。
@@ -70,7 +70,7 @@ Claude 的输出应该包含：
 [Claude 的完整输出]
 
 ————————
-[粘贴 prompts/zh-CN/review-response-triage.md 的完整内容]
+[粘贴 skills/zh-CN/ef-review-response-triage/SKILL.md 的完整内容]
 ```
 
 如果 Codex 判断当前路线不稳，回到第一步或第二步。若路线成立，再输出方案文档。
@@ -85,11 +85,12 @@ Claude 的输出应该包含：
 请基于上面的讨论给出方案，不要直接改代码。
 
 ————————
-[粘贴 prompts/zh-CN/large-plan.md 的完整内容]
+[粘贴 skills/zh-CN/ef-large-plan/SKILL.md 的完整内容]
 ```
 
 Codex 的输出应该包含：
 
+- 方案写进一份 md 文档，文档名由 Codex 自己取。
 - 读了哪些文件和关键位置。
 - 按文件组织的 diff，每处改动标注类别（需求必需 / 安全必需 / 其他）。
 - 业务影响（用用户行为描述，不用代码术语）。
@@ -100,7 +101,7 @@ Codex 的输出应该包含：
 
 ## 第五步：把方案文档发给 Claude 做正式终审
 
-把 Codex 输出的完整方案复制给 Claude，然后使用 `prompts/zh-CN/final-plan-review.md`。
+把 Codex 输出的完整方案复制给 Claude，然后使用 `skills/zh-CN/ef-final-plan-review/SKILL.md`。
 
 把模板的 `<PASTE_PLAN_HERE>` 替换为 Codex 给出的完整方案内容。
 
@@ -110,7 +111,7 @@ Claude 应该只指出真正会影响上线、偏离需求或扩大范围的问�
 
 ## 第六步：把 Claude 的评审发回 Codex 复核
 
-把 Claude 的完整输出复制给 Codex，然后使用 `prompts/zh-CN/review-response-triage.md`。
+把 Claude 的完整输出复制给 Codex，然后使用 `skills/zh-CN/ef-review-response-triage/SKILL.md`。
 
 ```text
 下面是 Claude 对正式方案的批评。请不要盲从，把它转成下一版方案前的决策清单。
@@ -118,14 +119,14 @@ Claude 应该只指出真正会影响上线、偏离需求或扩大范围的问�
 [Claude 的完整输出]
 
 ————————
-[粘贴 prompts/zh-CN/review-response-triage.md 的完整内容]
+[粘贴 skills/zh-CN/ef-review-response-triage/SKILL.md 的完整内容]
 ```
 
 Codex 的输出应该包含：
 
 - 思路变化总结（逐项，不允许"整体符合预期"这类概括）。
 - 对每条关键批评的复核结论，每条必须有代码证据、对话证据或产品语义证据。
-- 采纳、部分采纳、不采纳、需要用户拍板的分类。
+- 每条的处理结论（必须改思路 / 方案阶段展开 / 暂不处理 / 对方判断不成立 / 需要用户拍板）、是否已讨论过、不修的后果。
 - 低价值条目的归档项。
 
 **停下的信号**：Codex 没有验证就直接标"属实"或"不属实"——要求它先读对应文件，再给结论；没有打开文件就只能写"无法判断"。
@@ -134,8 +135,8 @@ Codex 的输出应该包含：
 
 根据方案规模选择执行模板：
 
-- **小方案**：在同一个 Codex 对话里直接发送 `prompts/zh-CN/small-execute.md` 的完整内容，不需要额外上下文。
-- **大方案**：把最终确认的方案保存为本地文件，把 `prompts/zh-CN/strict-execute.md` 的完整内容发给 Codex，并把模板里的 `<PLAN_DOCUMENT_PATH>` 替换为实际文件路径。
+- **小方案**：在同一个 Codex 对话里直接发送 `skills/zh-CN/ef-small-execute/SKILL.md` 的完整内容，不需要额外上下文。
+- **大方案**：把 `skills/zh-CN/ef-strict-execute/SKILL.md` 的完整内容发给 Codex，并把模板里的 `<PLAN_DOCUMENT_PATH>` 替换为 large-plan 写出的方案文档路径。
 
 Codex 的执行汇报应该包含：
 

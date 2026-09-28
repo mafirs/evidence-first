@@ -14,7 +14,7 @@
 
 ## 第一步：用 diagnose 定位问题
 
-在消息开头写清楚问题现象，加分隔线，然后复制 `prompts/zh-CN/diagnose.md` 的完整内容。
+在消息开头写清楚问题现象，加分隔线，然后复制 `skills/zh-CN/ef-diagnose/SKILL.md` 的完整内容。
 
 ```text
 当前有个问题：任务详情页点击"完成"后，界面短暂显示完成；刷新页面后又变为未完成。
@@ -29,44 +29,46 @@
 请确认是否确实存在这个问题，并定位它实际来自哪里。
 
 ————————
-[粘贴 prompts/zh-CN/diagnose.md 完整内容]
+[粘贴 skills/zh-CN/ef-diagnose/SKILL.md 完整内容]
 ```
 
 Codex 的输出应该包含：
 
 - 它读了哪些文件，以及为什么认为它们相关。
-- 哪些结论是 `[已读确认]`，哪些是 `[假设-需验证]`。
+- 先给不看代码的人读的结论，再给证据。
+- 哪些结论是 `[代码确认]`，哪些是 `[推断]`。
 - 根因的文件路径和行号。
 - 如果根因仍然分叉，列出各分支和触发条件。
 
 **停下的信号**：Codex 没读代码就给出修法，或者给的是"建议你检查一下 X"而不是读代码后的实际结论——停下，让它先读代码，只输出分析，不输出 diff。
 
-## 第二步：用 route-without-user-idea 让 Codex 给路线
+## 第二步：用 route-known-problem 让 Codex 比较修法
 
-定位之后你还没有好路线，把 route-without-user-idea 加进同一个对话。
+定位之后你还没有确定修法，把 route-known-problem 加进同一个对话。
 
 ```text
 上面已经定位到问题，但我还没有确定修法。
 
-请基于当前对话上下文给出可选路线。本轮只读不改，不要输出 diff。
+请基于当前对话里的定位结论比较修复路线。本轮只读不改，不要输出 diff。
 
 ————————
-[粘贴 prompts/zh-CN/route-without-user-idea.md 的完整内容]
+[粘贴 skills/zh-CN/ef-route-known-problem/SKILL.md 的完整内容]
 ```
 
 Codex 的输出应该包含：
 
-- 问题真正的杠杆点。
-- 2–4 条有架构差异的路线，每条说明它赌的是什么。
-- 默认倾向和反转条件。
+- 1–3 条修复路线；只有一条合理路线时，说明为什么没有第二条。
+- 每条路线消除的是根因还是触发条件、拿什么换什么、落在项目哪个现有机制上。
+- 按根治性、回归风险、侵入面、兼容性影响、实现工作量逐项比较的对比表。
+- 每条路线的档位（首选 / 可选 / 不推荐），首选附反转条件；如有止血方案，单独列出。
 
-**停下的信号**：Codex 只给了一条路线，或者直接推荐而没有横向比较——停下，要求它列出不同机制的修法，各自说明适用前提。
+**停下的信号**：Codex 没说清路线消除的是根因还是触发条件，或者推荐理由不是从对比表推出来的——停下，要求它补齐对比表，再按表给出推荐。
 
 进入下一步前，你需要选定一条路线。
 
 ## 第三步：把路线讨论发给 Claude 做早期评审
 
-路线看起来可行后，把你和 Codex 的关键讨论复制给 Claude，使用 `prompts/zh-CN/early-idea-review-with-code.md`。
+路线看起来可行后，把你和 Codex 的关键讨论复制给 Claude，使用 `skills/zh-CN/ef-early-idea-review-with-code/SKILL.md`。
 
 ```text
 下面是我和 Codex 关于 bug 根因和修复路线的对话。
@@ -76,14 +78,14 @@ Codex 的输出应该包含：
 请审查这条路线是否应该进入方案阶段。
 
 ————————
-[粘贴 prompts/zh-CN/early-idea-review-with-code.md 的完整内容]
+[粘贴 skills/zh-CN/ef-early-idea-review-with-code/SKILL.md 的完整内容]
 ```
 
 Claude 应该判断路线是否对准问题、是否有代码证据、是否存在更小路线，以及是否可以进入方案阶段。
 
 ## 第四步：把早期评审发回 Codex 复核
 
-把 Claude 的完整评审复制回 Codex，使用 `prompts/zh-CN/review-response-triage.md`。
+把 Claude 的完整评审复制回 Codex，使用 `skills/zh-CN/ef-review-response-triage/SKILL.md`。
 
 ```text
 下面是 Claude 对修复路线的早期评审。不要照单全收。请先验证批评，再决定这条路线是否继续。
@@ -91,7 +93,7 @@ Claude 应该判断路线是否对准问题、是否有代码证据、是否存�
 [Claude 的完整输出]
 
 ————————
-[粘贴 prompts/zh-CN/review-response-triage.md 的完整内容]
+[粘贴 skills/zh-CN/ef-review-response-triage/SKILL.md 的完整内容]
 ```
 
 如果 Codex 判断路线不稳，回到第二步或第三步。若路线成立，再输出方案文档。
@@ -106,7 +108,7 @@ Claude 应该判断路线是否对准问题、是否有代码证据、是否存�
 请基于上面的讨论给出小修方案，不要直接改代码。
 
 ————————
-[粘贴 prompts/zh-CN/small-plan.md 的完整内容]
+[粘贴 skills/zh-CN/ef-small-plan/SKILL.md 的完整内容]
 ```
 
 Codex 的输出应该包含：
@@ -122,7 +124,7 @@ Codex 的输出应该包含：
 
 ## 第六步：把方案文档发给 Claude 做正式终审
 
-把 Codex 的完整方案复制给 Claude，使用 `prompts/zh-CN/final-plan-review.md`。
+把 Codex 的完整方案复制给 Claude，使用 `skills/zh-CN/ef-final-plan-review/SKILL.md`。
 
 ```text
 下面是 Codex 输出的正式方案。请在执行前做终审。
@@ -130,14 +132,14 @@ Codex 的输出应该包含：
 [Codex 的完整方案]
 
 ————————
-[粘贴 prompts/zh-CN/final-plan-review.md 的完整内容]
+[粘贴 skills/zh-CN/ef-final-plan-review/SKILL.md 的完整内容]
 ```
 
 Claude 只应指出会导致方案失败、偏离需求或扩大范围的问题。
 
 ## 第七步：把终审结果发回 Codex 复核
 
-把 Claude 的完整输出复制回 Codex，使用 `prompts/zh-CN/review-response-triage.md`。
+把 Claude 的完整输出复制回 Codex，使用 `skills/zh-CN/ef-review-response-triage/SKILL.md`。
 
 如果 Codex 验证后认为方案必须改，回到第五步。若路线必须改，回到第二步。若批评不成立或已覆盖，再进入执行。
 
@@ -146,7 +148,7 @@ Claude 只应指出会导致方案失败、偏离需求或扩大范围的问题�
 方案通过终审和复核后，在同一个对话里继续。small-execute 不需要额外上下文，直接复制完整内容发送。
 
 ```text
-[粘贴 prompts/zh-CN/small-execute.md 的完整内容]
+[粘贴 skills/zh-CN/ef-small-execute/SKILL.md 的完整内容]
 ```
 
 Codex 应该先检查 `git status`，再机械应用方案里的 diff。

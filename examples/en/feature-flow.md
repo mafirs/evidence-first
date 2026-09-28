@@ -18,7 +18,7 @@ You are worried this might cause performance and permission issues, but you have
 
 ## Step 1: Use route-with-user-idea to have Codex challenge your idea
 
-Write out the current gap, your idea, and your concerns. Add a separator line. Then paste the full content of `prompts/en/route-with-user-idea.md`.
+Write out the current gap, your idea, and your concerns. Add a separator line. Then paste the full content of `skills/en/ef-route-with-user-idea/SKILL.md`.
 
 ```text
 Current gap: the search box only matches document titles, not keywords in the body.
@@ -30,7 +30,7 @@ My concerns: this might slow down the initial page load, and might expose docume
 Read only this round. Please first verify whether the current gap is real, then evaluate whether my idea is viable. My idea is a candidate, not a constraint.
 
 ————————
-[paste prompts/en/route-with-user-idea.md full content]
+[paste skills/en/ef-route-with-user-idea/SKILL.md full content]
 ```
 
 Codex's output should include:
@@ -44,7 +44,7 @@ Codex's output should include:
 
 ## Step 2: Send the Codex conversation context to Claude for an early review
 
-When the route looks promising but you want Claude to find problems before a formal plan is written, copy the conversation context from Codex to Claude and use `prompts/en/early-idea-review-with-code.md`.
+When the route looks promising but you want Claude to find problems before a formal plan is written, copy the conversation context from Codex to Claude and use `skills/en/ef-early-idea-review-with-code/SKILL.md`.
 
 Replace the `<PASTE_CONVERSATION_CONTEXT_HERE>` placeholder in the template with the key content from your Codex conversation.
 
@@ -58,11 +58,11 @@ Claude's output should include:
 
 **Stop signal**: Claude raises a concern with no code evidence, only "this might be a problem" — ask it to provide a specific file and line, or explicitly acknowledge that this is an inference, not a code-confirmed finding.
 
-If Claude does not have code access, use `prompts/en/early-idea-review-from-chat.md` instead, but this path is generally less reliable than the code-access early review path.
+If Claude does not have code access, use `skills/en/ef-early-idea-review-from-chat/SKILL.md` instead, but this path is generally less reliable than the code-access early review path.
 
 ## Step 3: Send the early review back to Codex for direction triage
 
-Copy Claude's full output to Codex and use `prompts/en/review-response-triage.md`.
+Copy Claude's full output to Codex and use `skills/en/ef-review-response-triage/SKILL.md`.
 
 ```text
 Below is Claude's early review of the current route. Do not accept it as-is — turn it into a decision checklist for whether this direction should continue.
@@ -70,7 +70,7 @@ Below is Claude's early review of the current route. Do not accept it as-is — 
 [Claude's full output]
 
 ————————
-[paste prompts/en/review-response-triage.md full content]
+[paste skills/en/ef-review-response-triage/SKILL.md full content]
 ```
 
 If Codex says the current route is not stable, return to Step 1 or Step 2. If the route holds, write the plan document.
@@ -85,11 +85,12 @@ I am going with this route: reuse the back-end search API, extend query scope on
 Based on the discussion above, give me an implementation plan. Do not edit any code.
 
 ————————
-[paste prompts/en/large-plan.md full content]
+[paste skills/en/ef-large-plan/SKILL.md full content]
 ```
 
 Codex's output should include:
 
+- The plan written into a markdown document, named by Codex.
 - Which files and key locations it read.
 - Diffs organized by file, each change categorized (required / safety/robustness / other).
 - Business impact in plain terms, not code jargon.
@@ -100,7 +101,7 @@ Codex's output should include:
 
 ## Step 5: Send the plan document to Claude for a final adversarial review
 
-Copy Codex's full plan to Claude and use `prompts/en/final-plan-review.md`.
+Copy Codex's full plan to Claude and use `skills/en/ef-final-plan-review/SKILL.md`.
 
 Replace the `<PASTE_PLAN_HERE>` placeholder in the template with Codex's full plan.
 
@@ -110,7 +111,7 @@ Claude should only flag things that will cause real problems if left in, or that
 
 ## Step 6: Send Claude's review back to Codex for verification
 
-Copy Claude's full output to Codex and use `prompts/en/review-response-triage.md`.
+Copy Claude's full output to Codex and use `skills/en/ef-review-response-triage/SKILL.md`.
 
 ```text
 Below is Claude's critique of the formal plan. Do not accept it as-is — turn it into a decision checklist for the next version of the plan.
@@ -118,14 +119,14 @@ Below is Claude's critique of the formal plan. Do not accept it as-is — turn i
 [Claude's full output]
 
 ————————
-[paste prompts/en/review-response-triage.md full content]
+[paste skills/en/ef-review-response-triage/SKILL.md full content]
 ```
 
 Codex's output should include:
 
 - A direction change summary (item by item — "generally aligned" is not acceptable).
 - A response to each key finding, backed by code evidence, conversation evidence, or product semantics.
-- A disposition for each item: accept / partially accept / reject / needs your decision.
+- For each item, a handling decision (must change direction / expand in the plan stage / defer / reviewer is wrong / needs your decision), whether it was already discussed, and the consequence of not fixing it.
 - An archive list for low-value items.
 
 **Stop signal**: Codex marks an item "confirmed" or "not confirmed" without opening the relevant file — ask it to read the code first; without opening the file, the only valid verdict is "cannot determine."
@@ -134,8 +135,8 @@ Codex's output should include:
 
 Choose the execution template based on plan size:
 
-- **Small plan**: in the same Codex conversation, paste the full content of `prompts/en/small-execute.md` directly. No additional context needed.
-- **Large plan**: save the final confirmed plan to a local file, paste the full content of `prompts/en/strict-execute.md` to Codex, and replace `<PLAN_DOCUMENT_PATH>` with the actual file path.
+- **Small plan**: in the same Codex conversation, paste the full content of `skills/en/ef-small-execute/SKILL.md` directly. No additional context needed.
+- **Large plan**: paste the full content of `skills/en/ef-strict-execute/SKILL.md` to Codex and replace `<PLAN_DOCUMENT_PATH>` with the path of the plan document written by large-plan.
 
 Codex's execution report should include:
 

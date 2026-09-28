@@ -14,7 +14,7 @@ You are not sure whether the problem is in the front-end state, the API request,
 
 ## Step 1: Use diagnose to locate the problem
 
-Write a clear description of the symptom at the top of your message. Add a separator line. Then paste the full content of `prompts/en/diagnose.md`.
+Write a clear description of the symptom at the top of your message. Add a separator line. Then paste the full content of `skills/en/ef-diagnose/SKILL.md`.
 
 ```text
 Current bug: on the task detail page, clicking "Complete" briefly shows the task as complete; after refreshing the page, the task shows as incomplete again.
@@ -29,44 +29,46 @@ Reproduction steps:
 Please confirm whether this bug exists and locate where it actually comes from.
 
 ————————
-[paste the full content of prompts/en/diagnose.md]
+[paste the full content of skills/en/ef-diagnose/SKILL.md]
 ```
 
 Codex's output should include:
 
 - Which files it read and why it considers them relevant.
-- Which conclusions are `[read-confirmed]` and which are `[assumption-needs-validation]`.
+- A conclusion for readers who don't read code first, then the evidence.
+- Which conclusions are `[code-confirmed]` and which are `[inference]`.
 - File path and line number for the root cause.
 - If the root cause still branches, a list of branches and their trigger conditions.
 
 **Stop signal**: Codex gives a fix without reading the code, or says "I suggest you check X" instead of giving conclusions based on actually reading the code — stop, ask it to read the code first and output only analysis, not a diff.
 
-## Step 2: Use route-without-user-idea to ask Codex for route options
+## Step 2: Use route-known-problem to have Codex compare fixes
 
-After diagnosis, if you still have no good route, add route-without-user-idea to the same conversation.
+After diagnosis, if you have not settled on a fix yet, add route-known-problem to the same conversation.
 
 ```text
-The problem has been located above, but I don't have a fix route yet.
+The problem has been located above, but I haven't settled on a fix yet.
 
-Based on the current conversation context, give me route options. Read only, no edits, no diff output.
+Compare fix routes based on the diagnosis in this conversation. Read only, no edits, no diff output.
 
 ————————
-[paste prompts/en/route-without-user-idea.md full content]
+[paste skills/en/ef-route-known-problem/SKILL.md full content]
 ```
 
 Codex's output should include:
 
-- Where the real leverage point of the problem is.
-- 2–4 routes with meaningfully different mechanisms, each stating what it bets on.
-- A default recommendation and the conditions that would flip it.
+- 1–3 fix routes; if only one route is reasonable, why there is no second one.
+- For each route: whether it removes the root cause or only the trigger, what it trades for what, and which existing mechanism in the project it builds on.
+- A comparison table covering root-cause fix, regression risk, intrusion surface, compatibility impact and implementation effort.
+- A rating for each route (preferred / optional / not recommended), with reversal conditions for the preferred one; any stopgap fix listed separately.
 
-**Stop signal**: Codex gives only one route, or recommends an option without comparing alternatives — stop, ask it to compare routes horizontally and show different mechanisms side by side.
+**Stop signal**: Codex does not say whether a route removes the root cause or only the trigger, or its recommendation does not follow from the comparison table — stop, ask it to complete the table and derive the recommendation from it.
 
 Choose a route before moving to the next step.
 
 ## Step 3: Send the route discussion to Claude for an early review
 
-When the route looks viable, copy the key Codex discussion to Claude and use `prompts/en/early-idea-review-with-code.md`.
+When the route looks viable, copy the key Codex discussion to Claude and use `skills/en/ef-early-idea-review-with-code/SKILL.md`.
 
 ```text
 Below is my conversation with Codex about the bug cause and fix route.
@@ -76,14 +78,14 @@ Below is my conversation with Codex about the bug cause and fix route.
 Please review whether this route should advance to the plan stage.
 
 ————————
-[paste prompts/en/early-idea-review-with-code.md full content]
+[paste skills/en/ef-early-idea-review-with-code/SKILL.md full content]
 ```
 
 Claude should say whether the route is on target, grounded in code, smaller than needed, or ready for the plan stage.
 
 ## Step 4: Send the early review back to Codex for triage
 
-Paste Claude's full review back to Codex and use `prompts/en/review-response-triage.md`.
+Paste Claude's full review back to Codex and use `skills/en/ef-review-response-triage/SKILL.md`.
 
 ```text
 Below is Claude's early review of the fix route. Do not accept it as-is. Verify the critique first, then decide whether the route should continue.
@@ -91,7 +93,7 @@ Below is Claude's early review of the fix route. Do not accept it as-is. Verify 
 [Claude's full output]
 
 ————————
-[paste prompts/en/review-response-triage.md full content]
+[paste skills/en/ef-review-response-triage/SKILL.md full content]
 ```
 
 If Codex says the route is not stable, return to Step 2 or Step 3. If the route holds, write the plan document.
@@ -106,7 +108,7 @@ I am going with this route: fix the task completion state not being correctly pe
 Based on the discussion above, give me a small-scope plan. Do not edit any code.
 
 ————————
-[paste prompts/en/small-plan.md full content]
+[paste skills/en/ef-small-plan/SKILL.md full content]
 ```
 
 Codex's output should include:
@@ -122,7 +124,7 @@ Codex's output should include:
 
 ## Step 6: Send the plan document to Claude for final review
 
-Copy Codex's full plan to Claude and use `prompts/en/final-plan-review.md`.
+Copy Codex's full plan to Claude and use `skills/en/ef-final-plan-review/SKILL.md`.
 
 ```text
 Below is Codex's formal plan. Please do the final review before execution.
@@ -130,14 +132,14 @@ Below is Codex's formal plan. Please do the final review before execution.
 [Codex's full plan]
 
 ————————
-[paste prompts/en/final-plan-review.md full content]
+[paste skills/en/ef-final-plan-review/SKILL.md full content]
 ```
 
 Claude should only flag issues that would make the plan fail, drift from the request, or expand scope.
 
 ## Step 7: Send the final review back to Codex for triage
 
-Copy Claude's full output back to Codex and use `prompts/en/review-response-triage.md`.
+Copy Claude's full output back to Codex and use `skills/en/ef-review-response-triage/SKILL.md`.
 
 If Codex verifies that the plan must change, return to Step 5. If the route must change, return to Step 2. If the critique is invalid or already covered, proceed to execution.
 
@@ -146,7 +148,7 @@ If Codex verifies that the plan must change, return to Step 5. If the route must
 After the plan has passed final review and triage, continue in the same conversation. This template does not need additional context — just paste the full content and send it.
 
 ```text
-[paste prompts/en/small-execute.md full content]
+[paste skills/en/ef-small-execute/SKILL.md full content]
 ```
 
 Codex should check `git status` first, then apply the plan diffs mechanically.
