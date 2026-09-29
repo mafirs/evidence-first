@@ -6,6 +6,8 @@ Evidence-first Dev Workflow 是一套面向 AI coding 的分阶段 Prompt 工作
 
 它不是一个“万能 Prompt”，也不是让 AI 一次性从需求写到上线的自动驾驶流程。它的目标更具体：当你已经在用 AI 写代码，但经常被它的猜测、越界修改和过早实现拖累时，用一组阶段化模板把 agent 拉回证据、边界和验证。
 
+> **通用规则**：[AGENTS.md](AGENTS.md)（[English](AGENTS.en.md)）是这套工作方式的全局规则，可以直接放进 Codex、Claude Code、Cursor 等工具的全局配置。
+
 ## 它解决什么问题
 
 AI coding 真正危险的地方，通常不是它不会写代码，而是它太快进入实现：
@@ -114,12 +116,12 @@ flowchart TD
 
 如果你想把这套工作方式迁移到自己的工具或仓库：
 
-- `rules/global-agent-rules.zh-CN.md`：全局 agent 规则，可直接放进 Codex / Claude Code / Cursor 等工具的全局规则或 `AGENTS.md` 类规则文件。和阶段模板冲突时，以阶段模板为准。
-- `rules/global-agent-rules.en.md`：英文版全局 agent 规则。
+- [`AGENTS.md`](AGENTS.md)：全局 agent 规则，可直接放进 Codex / Claude Code / Cursor 等工具的全局规则。和阶段模板冲突时，以阶段模板为准。在本仓库里运行 Codex 或 Claude Code 时会自动加载这套规则（Claude Code 经由 [`CLAUDE.md`](CLAUDE.md) 引用它）。
+- [`AGENTS.en.md`](AGENTS.en.md)：英文版全局 agent 规则。
 - `rules/generate-project-agent-rules.zh-CN.md`：项目级规则生成 Prompt，让 agent 读取当前仓库，生成 `AGENTS.md`、`CLAUDE.md`、Cursor rules 或等价规则文件。
 - `rules/generate-project-agent-rules.en.md`：英文版项目级规则生成 Prompt。
 
-只想给工具配置长期默认行为，复制 `global-agent-rules`；想为某个具体仓库生成项目级规则，复制 `generate-project-agent-rules`。
+只想给工具配置长期默认行为，复制 `AGENTS.md`；想为某个具体仓库生成项目级规则，复制 `generate-project-agent-rules`。
 
 ## 安全边界
 
@@ -136,10 +138,12 @@ flowchart TD
 
 ```text
 README.md / README.zh-CN.md   英文 / 中文入口
+AGENTS.md / AGENTS.en.md      全局规则（中文 / 英文）
+CLAUDE.md                     让 Claude Code 引用 AGENTS.md
 install.sh                    把 skill 链接到 Claude Code 和 Codex
 skills/zh-CN/ef-*/            中文模板，每个目录一个 skill（SKILL.md + agents/openai.yaml）
 skills/en/ef-*/               英文模板
-rules/                        全局规则模板与项目级规则生成 Prompt
+rules/                        项目级规则生成 Prompt
 examples/                     中文示例流程
 examples/en/                  英文示例流程
 CHANGELOG.md                  版本变更记录

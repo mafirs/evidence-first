@@ -6,6 +6,8 @@ Evidence-first Dev Workflow is a staged Prompt workflow for AI coding: read code
 
 It is not a universal Prompt, and it is not an autopilot flow that asks AI to go from request to production in one jump. Its goal is narrower: when you already use AI for coding but often get burned by guessing, scope creep, or premature implementation, these staged templates pull the agent back to evidence, boundaries, and verification.
 
+> **General rules**: [AGENTS.en.md](AGENTS.en.md) ([中文](AGENTS.md)) holds the global rules behind this workflow, ready to drop into the global configuration of Codex, Claude Code, Cursor, and similar tools.
+
 ## What problem it solves
 
 The dangerous part of AI coding is usually not that the agent cannot write code. It is that the agent moves into implementation too quickly:
@@ -114,12 +116,12 @@ End-to-end walkthroughs are in `examples/en/`: `bugfix-flow.md`, `feature-flow.m
 
 If you want to adapt this workflow to your own tools or repositories:
 
-- `rules/global-agent-rules.en.md`: global agent rules that can be copied into Codex, Claude Code, Cursor, or `AGENTS.md`-style rules files. Where they conflict with a stage template, the template wins.
-- `rules/global-agent-rules.zh-CN.md`: Chinese global agent rules.
+- [`AGENTS.en.md`](AGENTS.en.md): global agent rules that can be copied into the global rules of Codex, Claude Code, Cursor, and similar tools. Where they conflict with a stage template, the template wins.
+- [`AGENTS.md`](AGENTS.md): Chinese global agent rules. Codex and Claude Code load them automatically when run inside this repository (Claude Code through the import in [`CLAUDE.md`](CLAUDE.md)).
 - `rules/generate-project-agent-rules.en.md`: a project-level rules generator Prompt that has an agent read the current repository and generate `AGENTS.md`, `CLAUDE.md`, Cursor rules, or an equivalent rules file.
 - `rules/generate-project-agent-rules.zh-CN.md`: Chinese project-level rules generator Prompt.
 
-Use `global-agent-rules` for long-term default behavior in a tool. Use `generate-project-agent-rules` to generate rules for a specific repository.
+Use `AGENTS.en.md` (or the Chinese `AGENTS.md`) for long-term default behavior in a tool. Use `generate-project-agent-rules` to generate rules for a specific repository.
 
 ## Safety boundaries
 
@@ -136,10 +138,12 @@ The following situations need extra controls:
 
 ```text
 README.md / README.zh-CN.md   English / Chinese entry points
+AGENTS.md / AGENTS.en.md      global rules (Chinese / English)
+CLAUDE.md                     makes Claude Code import AGENTS.md
 install.sh                    links the skills into Claude Code and Codex
 skills/en/ef-*/               English templates, one skill per directory (SKILL.md + agents/openai.yaml)
 skills/zh-CN/ef-*/            Chinese templates
-rules/                        global rules templates and project-level rules generator
+rules/                        project-level rules generator
 examples/en/                  English example flows
 examples/                     Chinese example flows
 CHANGELOG.md                  release notes

@@ -1,5 +1,10 @@
 # Changelog
 
+## 未发布 / Unreleased
+
+- 全局规则移到根目录：中文 `AGENTS.md`、英文 `AGENTS.en.md`（原 `rules/global-agent-rules.*`）；新增 `CLAUDE.md`，让 Claude Code 通过 `@AGENTS.md` 引用同一份规则。README 开头加了直达链接。
+- Moved the global rules to the repository root: Chinese `AGENTS.md`, English `AGENTS.en.md` (formerly `rules/global-agent-rules.*`); added `CLAUDE.md` so Claude Code imports the same rules via `@AGENTS.md`. The READMEs now link to them at the top.
+
 ## v0.2.0 — 2026-09-28
 
 ### 中文

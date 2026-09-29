@@ -1,5 +1,7 @@
 # General rules (for all AI tools)
 
+English | [简体中文](AGENTS.md)
+
 > When using the evidence-first stage templates, the specific requirements in a template (such as question limits and evidence labels) take precedence over these rules.
 
 ## 1. Core layer — applies in all situations
