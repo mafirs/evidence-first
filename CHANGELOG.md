@@ -2,6 +2,10 @@
 
 ## 未发布 / Unreleased
 
+- 19 个 `ef-*` 阶段模板换成一个技能 `dev-flow`（`skills/<语言>/dev-flow`）：需求单、改动地图检查脚本、独立评审脚本（codex / claude / dsh，按 `DEV_FLOW_REVIEWERS` 顺序回退）、固定评审 Prompt、轮数上限和停下条件；可以走完整流程，也可以只做定位、出方案、执行、评审、自检、处理外来评审意见中的一段。技能会自动触发。删除 `examples/` 和 `rules/`。`install.sh` 改为链接 `dev-flow`，并清理旧版留下的 `ef-*` 失效链接。新增 `tests/run.sh`。
+- `AGENTS.md` 换成作者当前使用的全局规则；`AGENTS.en.md` 按新版重译，语言一行改为跟随用户语言。
+- Replaced the 19 `ef-*` stage templates with one skill, `dev-flow` (`skills/<lang>/dev-flow`): a requirement doc, a change-map check script, an independent review script (codex / claude / dsh, falling back in the order of `DEV_FLOW_REVIEWERS`), fixed review prompts, round limits and stop conditions. It runs the full flow or just one stage: locate, plan, execute, review, self-check, or triage an outside review. The skill triggers automatically. Removed `examples/` and `rules/`. `install.sh` now links `dev-flow` and cleans up broken `ef-*` links from earlier versions. Added `tests/run.sh`.
+- `AGENTS.md` is now the author's current global rules; `AGENTS.en.md` was retranslated from it, with the language line changed to follow the user's language.
 - 全局规则移到根目录：中文 `AGENTS.md`、英文 `AGENTS.en.md`（原 `rules/global-agent-rules.*`）；新增 `CLAUDE.md`，让 Claude Code 通过 `@AGENTS.md` 引用同一份规则。README 开头加了直达链接。
 - Moved the global rules to the repository root: Chinese `AGENTS.md`, English `AGENTS.en.md` (formerly `rules/global-agent-rules.*`); added `CLAUDE.md` so Claude Code imports the same rules via `@AGENTS.md`. The READMEs now link to them at the top.
 

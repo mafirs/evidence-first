@@ -2,153 +2,92 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Evidence-first Dev Workflow is a staged Prompt workflow for AI coding: read code to locate the problem, compare routes, use adversarial review and triage to stabilize the direction, write and review the plan document, then execute strictly at the end.
+This repository provides one skill, `dev-flow`, that takes an AI coding agent from a one-line request to a PR-ready state: the changes are committed on a local feature branch and the PR description is written to a file; you push and open the PR yourself. You can also have it run just one stage: locate, plan, execute, review a plan or code, or triage someone else's review.
 
-It is not a universal Prompt, and it is not an autopilot flow that asks AI to go from request to production in one jump. Its goal is narrower: when you already use AI for coding but often get burned by guessing, scope creep, or premature implementation, these staged templates pull the agent back to evidence, boundaries, and verification.
+It targets the usual problems when agents write code: guessing before reading the code, changing files outside the requirement, and review loops that run for hours without converging. It hands these constraints to files and scripts so they depend less on the model's self-discipline:
 
-> **General rules**: [AGENTS.en.md](AGENTS.en.md) ([中文](AGENTS.md)) holds the global rules behind this workflow, ready to drop into the global configuration of Codex, Claude Code, Cursor, and similar tools.
+- **Requirement doc**: your words are saved verbatim and sorted sentence by sentence into decisions, examples / reasons, and factual claims. Success criteria come only from decisions; factual claims are verified against the code. Any doubt the agent has about your words can only become a question for you, never a wider change.
+- **Change map**: the plan stage writes down which files may change, and a script checks the actual changes against git; anything out of scope stops the flow and asks you.
+- **Independent review**: the plan and the code each go to a separate reviewer agent (codex, claude or dsh). Every round is a new process that sees only the files in the run directory, and the review prompts are fixed files the coding agent can't rewrite.
+- **Round limits**: plan review gets 1 round, plus 1 targeted re-review when a [core] finding was adopted; code review gets at most 2 rounds. Every finding is judged adopted, rejected or void, and a rejection must carry evidence.
+- **Stops to ask you in only six cases**: an ambiguous requirement, a fix that needs files or behavior outside the scope, a deadlock with the reviewer, the same problem surviving two fixes, no reviewer available, or a premise in your words that contradicts the code.
 
-## What problem it solves
+```mermaid
+flowchart LR
+  A["Requirement doc"] --> B["Locate<br>(large changes)"] --> C["Plan"] --> D["Plan review"]
+  D --> E["Failing acceptance test first"] --> F["Execute"] --> G["Command checks<br>tests / lint / scope"]
+  G --> H["Fork self-check"] --> I["Independent review"] --> J["Local commit + pr.md"]
+```
 
-The dangerous part of AI coding is usually not that the agent cannot write code. It is that the agent moves into implementation too quickly:
+## Requirements
 
-- It guesses before reading the relevant code.
-- It mixes diagnosis, route selection, planning, and execution.
-- It refactors, reformats, or touches unrelated files.
-- It treats typecheck success as proof that behavior is correct.
-- It accepts or rejects another AI's review without verifying the evidence.
+- git and bash (the scripts have only been tested with macOS's bundled bash 3.2)
+- At least one reviewer CLI: `codex`, `claude` or `dsh`, signed in and runnable from a terminal
+- A coding agent that can read and write files and run commands, such as Claude Code or Codex
 
-This workflow does not ask the agent to jump from one request to the final patch. It splits development into stages that can be checked, stopped, and reviewed.
-
-## Three ways to use it
-
-Every template is a single file, `skills/en/ef-<name>/SKILL.md`, and that one file can be used three ways:
-
-| Use | How | Good for |
-|---|---|---|
-| Copy and paste | Open SKILL.md, skip the few lines wrapped in `---` at the top, and copy the body below | No install, or AI chat in a browser |
-| Claude Code | After `./install.sh en`, type `/ef-diagnose` followed by your context | Daily use in Claude Code |
-| Codex | After `./install.sh en`, type `$ef-diagnose` followed by your context | Daily use in Codex |
-
-### Install
+## Install
 
 ```bash
 git clone https://github.com/mafirs/evidence-first.git
 cd evidence-first
-./install.sh en     # Chinese templates: ./install.sh
+./install.sh en     # Chinese version: ./install.sh
 ```
 
-`install.sh` symlinks each skill into `~/.claude/skills` (Claude Code) and `~/.agents/skills` (Codex). Existing entries with the same name are skipped, never overwritten. Run `git pull` in the repository to get updates. Start a new Claude Code or Codex session after installing. To uninstall, delete the `ef-*` links in those two directories.
+`install.sh` symlinks `skills/<lang>/dev-flow` into `~/.claude/skills` (Claude Code) and `~/.agents/skills` (Codex). Existing entries with the same name are skipped, never overwritten; broken `ef-*` links left by earlier versions are removed. Run `git pull` in the repository to update. Start a new session after installing. To uninstall, delete the `dev-flow` links in those two directories.
 
-Every template runs only when you invoke it by name; the AI never triggers it on its own. Claude Code uses `disable-model-invocation: true`, and Codex uses `allow_implicit_invocation: false` in `agents/openai.yaml`.
+## Usage
 
-### How to provide context
+The skill triggers on its own. Hand over a code change and ask the agent to go through planning, review and testing itself, or just say "run dev-flow", and it runs the full flow.
 
-- Copy and paste: write the symptom, prior discussion, or your idea first, add a separator line `————————`, then paste the template body.
-- Command: write your context right after `/ef-...` or `$ef-...`. If the context is long, put it in a local file and ask the agent to read that file path.
-- `<PASTE_..._HERE>` and `<PLAN_DOCUMENT_PATH>` in the templates are placeholders; replace them with the conversation, the plan, or a file path.
-- Do not edit SKILL.md files in the repository to paste one-off context. Before committing or sharing, check for private conversations, local absolute paths, credentials, and internal project names.
+To run a single stage, name dev-flow and the stage; it stops when that stage is done:
 
-## Choose a template by situation
+- "dev-flow locate …": read-only; produces the requirement doc and known facts with file:line.
+- "dev-flow plan only": requirement doc, plan, change map and plan review; no branch, no code changes.
+- "dev-flow execute this plan": takes the plan in the run directory or one you give it, writes a failing test first, then executes, checks, self-checks and commits to a feature branch.
+- "dev-flow review this plan" / "dev-flow review this branch": one round of independent review with every finding judged; nothing is changed. When reviewing someone else's branch, the PR description and commit messages serve as the requirement source.
+- "dev-flow self-check": one fork self-check round, report only.
+- "dev-flow triage this review": checks each item of a review you paste against the code and judges it adopted, rejected or unverifiable; nothing is changed.
+- "dev-flow continue <run dir or task short name>": works out where things stand from the files already in the run directory and picks up at the next step.
 
-The "main agent" is the AI that writes the plan and changes the code. The "reviewer agent" is a second AI that challenges it, ideally a different model or vendor.
+Hands-on testing in the UI is off by default; ask for it in the request when you want it, for example "test it in the browser".
 
-### Main flow
+## Reviewers
 
-| Stage | Current situation | Template | Send to |
-|---|---|---|---|
-| Diagnose | Something is broken; find the relevant code and root cause | `ef-diagnose` | Main agent |
-| Route | The bug is located; compare fixes | `ef-route-known-problem` | Main agent |
-| Route | You have your own idea and want the AI to challenge it | `ef-route-with-user-idea` | Main agent |
-| Route | You have no preset direction and need the AI to propose routes | `ef-route-without-user-idea` | Main agent |
-| Early review | Another AI reads the code and reviews the early idea | `ef-early-idea-review-with-code` | Reviewer agent |
-| Early review | Another AI without code access reviews from the conversation only | `ef-early-idea-review-from-chat` | Reviewer agent |
-| Triage | Bring the review back and verify it item by item; decide whether the direction holds | `ef-review-response-triage` | Main agent |
-| Plan | A small change plan, without editing code | `ef-small-plan` | Main agent |
-| Plan | A multi-file or complex change; the plan goes into a markdown document | `ef-large-plan` | Main agent |
-| Final review | Last adversarial check before execution | `ef-final-plan-review` | Reviewer agent |
-| Triage | Verify the final review; decide to revise the plan, return to routes, or execute | `ef-review-response-triage` | Main agent |
-| Execute | A small plan you just confirmed, in the same conversation | `ef-small-execute` | Main agent |
-| Execute | A reviewed plan document, executed strictly | `ef-strict-execute` | Main agent |
+`review.sh` looks for a reviewer in the order of `DEV_FLOW_REVIEWERS`, default `codex claude dsh`, skipping any that aren't installed; when one fails, produces empty output or no valid verdict line, it moves on to the next.
 
-If all you know is that something is broken, start with `ef-diagnose`.
-
-### Supporting templates
-
-| Template | Purpose |
-|---|---|
-| `ef-task-baseline` | Keep one task baseline file during a long task, recording the goal, confirmed plan, pending items, and reference facts, so many rounds of discussion do not drift |
-| `ef-co-author-mode` | Co-author mode: the quality of the work comes first, not your momentary preferences |
-| `ef-answer-style` | Answer style: answer the current question first, with evidence and next steps |
-| `ef-optimize-prompt` | Improve a Prompt while keeping its meaning, adding only requirements that serve the original question |
-| `ef-find-reference-projects` | Search, filter, and compare mature GitHub projects worth referencing |
-| `ef-subagent-dispatch` | A generic sub-agent dispatch clause to append to research tasks |
-
-## Main flow and two review loops
-
-```mermaid
-flowchart TD
-  A["Diagnose\nread code"] --> B["Route\ncompare fixes"]
-  B --> C["Early review\nreviewer agent challenges"]
-  C --> D["Triage review\nmain agent verifies critique"]
-  D -->|direction not stable| B
-  D -->|direction holds| E["Plan document\nwrite the implementation plan"]
-  E --> F["Final review\nreviewer agent challenges"]
-  F --> G["Triage review\nmain agent verifies critique"]
-  G -->|revise plan| E
-  G -->|change route| B
-  G -->|ready to execute| H["Execute\napply confirmed diff"]
+```bash
+export DEV_FLOW_REVIEWERS="dsh codex"      # change the order
+export DEV_FLOW_DSH_PROFILE=headless       # dsh profile name, default headless
+export DEV_FLOW_REVIEWER="your-cli --flag"  # use only this command, no fallback
 ```
 
-1. **Diagnose**: read code only, cite file-line evidence, and separate fact from inference.
-2. **Route**: compare mechanisms before writing diffs.
-3. **Early review**: send the route to the reviewer agent for adversarial review.
-4. **Triage review**: the main agent verifies the critique and decides whether to repeat review, change route, or plan.
-5. **Plan**: produce the implementation plan without editing code.
-6. **Final review**: the reviewer agent reviews the plan document, and the main agent verifies that review.
-7. **Execute**: after review and triage pass, apply only the confirmed diff.
+The reviewer should preferably be a different model from the coding agent: when Claude Code writes the code, put `claude` last.
 
-The core principles are evidence discipline, phase separation, minimal change, and verification before execution.
+For one-off instructions to the reviewer (for example "focus on concurrency this time"), just tell the agent; it writes your words verbatim into `review-note.md` in the run directory, which is appended to every review message.
 
-End-to-end walkthroughs are in `examples/en/`: `bugfix-flow.md`, `feature-flow.md`, and `adversarial-review-flow.md`.
+## Run directory
 
-## Rule templates
+Each task gets a run directory outside the repository, `~/.vibe-runs/<repo name>/<date>-<task short name>/`, so nothing ends up in the PR. It holds the requirement doc `requirement.md`, the plan `plan.md`, the change map `scope.txt`, the check log `checks.log`, the review texts and the judgment record `closed.md`, and the PR description `pr.md`. When the context is compressed, the session is interrupted, or another agent takes over, everything is recovered from these files.
 
-If you want to adapt this workflow to your own tools or repositories:
+## Global rules
 
-- [`AGENTS.en.md`](AGENTS.en.md): global agent rules that can be copied into the global rules of Codex, Claude Code, Cursor, and similar tools. Where they conflict with a stage template, the template wins.
-- [`AGENTS.md`](AGENTS.md): Chinese global agent rules. Codex and Claude Code load them automatically when run inside this repository (Claude Code through the import in [`CLAUDE.md`](CLAUDE.md)).
-- `rules/generate-project-agent-rules.en.md`: a project-level rules generator Prompt that has an agent read the current repository and generate `AGENTS.md`, `CLAUDE.md`, Cursor rules, or an equivalent rules file.
-- `rules/generate-project-agent-rules.zh-CN.md`: Chinese project-level rules generator Prompt.
+[AGENTS.en.md](AGENTS.en.md) ([中文](AGENTS.md)) holds the global rules behind this way of working, ready to put into the global configuration of Codex, Claude Code, Cursor and similar tools. The execution-layer rules dev-flow relies on are also copied into the skill's `references/execution-rules.md`, so the skill works on its own.
 
-Use `AGENTS.en.md` (or the Chinese `AGENTS.md`) for long-term default behavior in a tool. Use `generate-project-agent-rules` to generate rules for a specific repository.
+## Repository layout
 
-## Safety boundaries
-
-This workflow improves control over AI coding, but it does not replace approval, rollback, audit, and permission boundaries for high-risk operations.
-
-The following situations need extra controls:
-
-- Production releases.
-- Database migrations.
-- Payment, billing, permission, or other irreversible high-risk changes.
-- Automatic remote push and deployment.
-
-## Repository structure
-
-```text
-README.md / README.zh-CN.md   English / Chinese entry points
-AGENTS.md / AGENTS.en.md      global rules (Chinese / English)
-CLAUDE.md                     makes Claude Code import AGENTS.md
-install.sh                    links the skills into Claude Code and Codex
-skills/en/ef-*/               English templates, one skill per directory (SKILL.md + agents/openai.yaml)
-skills/zh-CN/ef-*/            Chinese templates
-rules/                        project-level rules generator
-examples/en/                  English example flows
-examples/                     Chinese example flows
-CHANGELOG.md                  release notes
 ```
+skills/en/dev-flow/        English skill
+  SKILL.md                 flow, entry points, stop conditions
+  prompts/                 fixed prompts for plan review, code review and the fork self-check
+  templates/requirement.md requirement doc template
+  references/              execution-layer rules, task baseline (BASELINE) rules
+  scripts/                 check_scope.sh, review.sh, run_check.sh
+skills/zh-CN/dev-flow/     Chinese skill, same layout
+tests/run.sh               tests the scripts in throwaway repos with fake reviewers
+```
+
+After changing the scripts, run `tests/run.sh`; both languages go through the same cases.
 
 ## License
 
-MIT
+[MIT](LICENSE)
